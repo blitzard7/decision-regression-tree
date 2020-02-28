@@ -1,2 +1,16 @@
 # decision-regression-tree
 Adaptive Softwaresystems Project 1
+
+## Todo
+- [ ] create library for tree logic
+- [ ] implement decision tree (ID3) Algorithm
+- [ ] research about regression tree 
+- [ ] research how to visualize data 
+
+## References
+- https://medium.com/greyatom/decision-trees-a-simple-way-to-visualize-a-decision-dc506a403aeb
+- https://www.geeksforgeeks.org/decision-tree/
+- https://scikit-learn.org/stable/modules/tree.html
+- https://www.saedsayad.com/decision_tree_reg.htm
+- https://towardsdatascience.com/how-to-visualize-a-decision-tree-in-5-steps-19781b28ffe2
+- https://explained.ai/decision-tree-viz/
