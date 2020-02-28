@@ -14,3 +14,4 @@ Adaptive Softwaresystems Project 1
 - https://www.saedsayad.com/decision_tree_reg.htm
 - https://towardsdatascience.com/how-to-visualize-a-decision-tree-in-5-steps-19781b28ffe2
 - https://explained.ai/decision-tree-viz/
+- https://github.com/benedekrozemberczki/awesome-decision-tree-papers
