@@ -16,6 +16,7 @@ Adaptive Softwaresystems Project 1
 - https://explained.ai/decision-tree-viz/
 - https://github.com/benedekrozemberczki/awesome-decision-tree-papers
 - https://towardsdatascience.com/understanding-decision-trees-for-classification-python-9663d683c952
+- https://www.geeksforgeeks.org/decision-tree-implementation-python/
 
 ### Videos
 - https://www.youtube.com/watch?v=7VeUPuFGJHk
