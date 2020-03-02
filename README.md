@@ -15,6 +15,7 @@ Adaptive Softwaresystems Project 1
 - https://towardsdatascience.com/how-to-visualize-a-decision-tree-in-5-steps-19781b28ffe2
 - https://explained.ai/decision-tree-viz/
 - https://github.com/benedekrozemberczki/awesome-decision-tree-papers
+- https://towardsdatascience.com/understanding-decision-trees-for-classification-python-9663d683c952
 
 ### Videos
 - https://www.youtube.com/watch?v=7VeUPuFGJHk
