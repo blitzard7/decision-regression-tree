@@ -2,8 +2,23 @@
 Adaptive Softwaresystems Project 1
 
 ## Todo
-- [ ] create library for tree logic
+### Logic
+- [x] create library for tree logic
+- [ ] build tree structure
 - [ ] implement decision tree (ID3) Algorithm
+- [ ] implement entropy calculation
+- [ ] implement information gain calculation
+- [ ] implement learn mechanism
+
+### Handling
+- [x] create console application
+- [ ] read from file (csv)?
+- [ ] add simple visualization
+
+### Data 
+- [ ] provide sample data
+
+### Research
 - [ ] research about regression tree 
 - [ ] research how to visualize data 
 
