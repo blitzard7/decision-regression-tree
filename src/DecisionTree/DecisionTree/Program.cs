@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Classification
+namespace DecisionTree
 {
     class Program
     {
