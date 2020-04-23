@@ -8,45 +8,70 @@ namespace DecisionTree.Logic.Services
 {
     public class CsvReader : ICsvReader
     {
-        public string Read(string file)
+        public string[] Read(string file)
         {
             var data = File.ReadAllLines(file);
 
             if (data.Length <= 0)
             {
-                return string.Empty;
+                return Array.Empty<string>();
             }
 
-            var columNames = GetData(data[0]);
-            return "";
+            return data;
         }
 
-        public CsvData CreateDataTableFromCsvFile(string[] data)
+        public CsvData CreateDataTableFromCsvFile(string rawData)
         {
-            var csvData = new CsvData();
-            var columns = GetColumns(data);
-            var rows = GetRows(data[1..^1]);
+            var data = SplitTable(rawData);
+            var columnNames = GetData(data[0]);
+            var columns = GetColumns(columnNames, data);
+            var rows = GetRows(data[1..^0]);
 
+            var csvData = new CsvData();
+            csvData.Columns.AddRange(columns);
+            csvData.Values.AddRange(rows);
 
             return csvData;
         }
 
-        private List<CsvRow> GetRows(string[] data)
+        public string[] SplitTable(string file)
         {
-            throw new NotImplementedException();
+            const string Splitter = "\r\n";
+            var data = file.Split(Splitter, StringSplitOptions.RemoveEmptyEntries);
+            return data;
         }
 
-        private List<CsvColumn> GetColumns(string[] data)
+        public string[]  GetData(string file)
         {
-            var columnNames = GetData(data[0]);
-            var columns = GetColumnsValues(columnNames, data[1..^1]);
-
-            return columns;
+            const string Splitter = ";";
+            var data = file.Split(Splitter, StringSplitOptions.RemoveEmptyEntries);
+            data = data.Select(x => x.Trim()).ToArray();
+            return data;
         }
 
-        private List<CsvColumn> GetColumnsValues(string[] columnNames, string[] data)
+        private IEnumerable<CsvRow> GetRows(IEnumerable<string> data)
         {
-            var column = new List<CsvColumn>();
+            var rows = new List<CsvRow>();
+            
+            foreach (var item in data)
+            {
+                var rowData = GetData(item);
+                var currentRow = new CsvRow();
+                currentRow.Values.AddRange(rowData);
+                rows.Add(currentRow);
+            }
+
+            return rows;
+        }
+
+        private IEnumerable<CsvColumn> GetColumns(string[] columnNames, string[] data)
+        {
+            return GetColumnsValues(columnNames, data[1..^0]);
+        }
+
+        private IEnumerable<CsvColumn> GetColumnsValues(string[] columnNames, string[] data)
+        {
+            var columns = new List<CsvColumn>();
 
             for (int i = 0; i < columnNames.Length; i++)
             {
@@ -61,15 +86,10 @@ namespace DecisionTree.Logic.Services
                     var columnValue = GetData(data[j])[i];
                     csvColumn.Values.Add(columnValue);
                 }
+
+                columns.Add(csvColumn);
             }
 
-            return column;
-        }
-
-        public string[] GetData(string file)
-        {
-            const string Splitter = ";";
-            var columns = file.Split(Splitter, System.StringSplitOptions.RemoveEmptyEntries);
             return columns;
         }
     }

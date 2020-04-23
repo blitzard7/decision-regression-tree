@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace DecisionTree.Logic.Tests
+{
+    public class TestData
+    {
+        public const string TestCsvContent = @"
+Outlook;Temperatur;Humidity;Wind;NeedUmbrella;
+Sunny;Hot;High;Weak;Yes;
+Sunny;Hot;High;Strong;Yes;
+";
+    }
+}
