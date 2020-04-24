@@ -1,4 +1,5 @@
 Outlook;Temperatur;Humidity;Wind;NeedUmbrella;
+Data
 Sunny;Hot;High;Weak;Yes;
 Sunny;Hot;High;Strong;Yes;
 Overcast;Hot;High;Weak;No;

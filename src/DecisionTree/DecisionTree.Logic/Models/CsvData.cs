@@ -6,11 +6,11 @@ namespace DecisionTree.Logic.Models
     {
         public CsvData()
         {
-            Columns = new List<CsvColumn>();
-            Values = new List<CsvRow>();
+            Columns = new Dictionary<string, List<string>>();
+            Rows = new List<string>();
         }
 
-        public List<CsvColumn> Columns { get; set; }
-        public List<CsvRow> Values { get; set; }
+        public Dictionary<string, List<string>> Columns { get; set; }
+        public List<string> Rows { get; set; }
     }
 }
