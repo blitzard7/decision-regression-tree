@@ -1,4 +1,6 @@
 ﻿using DecisionTree.Logic.Services;
+using DecisionTree.Logic.Validator;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,71 +10,13 @@ namespace DecisionTree.Logic.Tests
 {
     public class CsvServiceTest
     {
-        [Fact]
-        public void IsImportedFileValid_ShouldReturnFalseIfEmptyFileHasBeenSelected()
-        {
-            // Arrange 
-            var csvService = new CsvService();
-            var file = string.Empty;
-
-            // Act 
-            var isFileValid = csvService.IsImportedFileValid(file);
-
-            // Assert
-            Assert.False(isFileValid);
-        }
-
-        [Fact]
-        public void IsImportedFileValid_ShouldReturnFalseIfFileStartswithDataTag()
-        {
-            // Arrange 
-            var csvService = new CsvService();
-            var file = @"Data
-Sunny;Hot;High;Weak;Yes;";
-
-            // Act 
-            var isFileValid = csvService.IsImportedFileValid(file);
-
-            // Assert
-            Assert.False(isFileValid);
-        }
-
-        [Fact]
-        public void IsImportedFileValid_ShouldReturnFalseIfFileDoesNotContainDataTag()
-        {
-            // Arrange 
-            var csvService = new CsvService();
-            var file = @"Outlook;Temperatur;Humidity;Wind;NeedUmbrella;
-Sunny;Hot;High;Weak;Yes;";
-
-            // Act 
-            var isFileValid = csvService.IsImportedFileValid(file);
-
-            // Assert
-            Assert.False(isFileValid);
-        }
-
-        [Fact]
-        public void IsImportedFileValid_ShouldReturnTrueIfFileContainsValidMetadata()
-        {
-            // Arrange 
-            var csvService = new CsvService();
-            var file = @"Outlook;Temperatur;Humidity;Wind;NeedUmbrella;
-Data
-Sunny;Hot;High;Weak;Yes;";
-
-            // Act 
-            var isFileValid = csvService.IsImportedFileValid(file);
-
-            // Assert
-            Assert.True(isFileValid);
-        }
 
         [Fact]
         public void GetHeaderInformation_ShouldReturnListContainingHeaderInformation()
         {
             // Arrange
-            var csvService = new CsvService();
+            var formValidatorMock = new Mock<IFormValidator>();
+            var csvService = new CsvService(formValidatorMock.Object);
             var expected = new List<string>()
             {
                 "Outlook",
@@ -95,7 +39,8 @@ Sunny;Hot;High;Weak;Yes;";
         public void GetHeaderInformation_ShouldReturnEmptyListWhenNoHeaderGiven()
         {
             // Arrange
-            var csvService = new CsvService();
+            var formValidatorMock = new Mock<IFormValidator>();
+            var csvService = new CsvService(formValidatorMock.Object);
 
             // Act 
             var header = csvService.GetHeaderInformation(string.Empty);
@@ -112,7 +57,8 @@ Sunny;Hot;High;Weak;Yes;";
         public void GetDataInformation_ShouldReturnEmptyListWhenNoDataGiven(string input)
         {
             // Arrange
-            var csvService = new CsvService();
+            var formValidatorMock = new Mock<IFormValidator>();
+            var csvService = new CsvService(formValidatorMock.Object);
 
             // Act 
             var data = csvService.GetDataInformation(input);
@@ -125,7 +71,8 @@ Sunny;Hot;High;Weak;Yes;";
         public void GetDataInformation_ShouldReturnSplitDataInformation()
         {
             // Arrange
-            var csvService = new CsvService();
+            var formValidatorMock = new Mock<IFormValidator>();
+            var csvService = new CsvService(formValidatorMock.Object);
             var expected = new List<string>()
             {
                 "Sunny",
@@ -148,7 +95,9 @@ Sunny;Hot;High;Weak;Yes;";
         public void CreateColumns_ShouldThrowIndexOutOfRangeExceptionWhenEmptyMetaInformationIsGiven()
         {
             // Arrange
-            var csvService = new CsvService();
+            var formValidatorMock = new Mock<IFormValidator>();
+            formValidatorMock.Setup(x => x.IsRowFormatValid(It.IsAny<string[]>())).Returns(false);
+            var csvService = new CsvService(formValidatorMock.Object);
             string[] metaInformation = new string[0];
 
             // Act & Assert
@@ -162,7 +111,9 @@ Sunny;Hot;High;Weak;Yes;";
         public void CreateColumns_ShouldThrowIndexOutOfRangeExceptionWhenOneElementyMetaInformationIsGiven()
         {
             // Arrange
-            var csvService = new CsvService();
+            var formValidatorMock = new Mock<IFormValidator>();
+            formValidatorMock.Setup(x => x.IsRowFormatValid(It.IsAny<string[]>())).Returns(false);
+            var csvService = new CsvService(formValidatorMock.Object);
             string[] metaInformation = new string[1] { "test" };
 
             // Act & Assert
@@ -176,7 +127,9 @@ Sunny;Hot;High;Weak;Yes;";
         public void CreateColumns_ShouldThrowNullReferenceExceptionWhenNoMetaInformationIsGiven()
         {
             // Arrange
-            var csvService = new CsvService();
+            var formValidatorMock = new Mock<IFormValidator>();
+            formValidatorMock.Setup(x => x.IsRowFormatValid(It.IsAny<string[]>())).Returns(false);
+            var csvService = new CsvService(formValidatorMock.Object);
             string[] metaInformation = null;
 
             // Act & Assert
@@ -190,7 +143,9 @@ Sunny;Hot;High;Weak;Yes;";
         public void CreateColumns_ShouldReturnEmptyDictionaryWhenMetaInformationIsInvalid()
         {
             // Arrange
-            var csvService = new CsvService();
+            var formValidatorMock = new Mock<IFormValidator>();
+            formValidatorMock.Setup(x => x.IsRowFormatValid(It.IsAny<string[]>())).Returns(false);
+            var csvService = new CsvService(formValidatorMock.Object);
             string[] metaInformation = new string[2] { "asdf,asdf,asdf", "1,2,3,4" };
 
             // Act 
@@ -198,13 +153,16 @@ Sunny;Hot;High;Weak;Yes;";
 
             // Assert
             Assert.Empty(columns);
+            formValidatorMock.Verify(x => x.IsRowFormatValid(It.IsAny<string[]>()), Times.Once);
         }
 
         [Fact]
         public void CreateColumns_ShouldReturnEmptyValuesInDictionaryWhenDataInformationIsInvalid()
         {
             // Arrange
-            var csvService = new CsvService();
+            var formValidatorMock = new Mock<IFormValidator>();
+            formValidatorMock.Setup(x => x.IsRowFormatValid(It.IsAny<string[]>())).Returns(false);
+            var csvService = new CsvService(formValidatorMock.Object);
             string[] metaInformation = new string[2] { "col1;col2;col3", "1,2,3,4" };
 
             // Act 
@@ -212,13 +170,16 @@ Sunny;Hot;High;Weak;Yes;";
 
             // Assert
             Assert.Empty(columns.Values);
+            formValidatorMock.Verify(x => x.IsRowFormatValid(It.IsAny<string[]>()), Times.Once);
         }
 
         [Fact]
         public void CreateColumns_ShouldReturnNonEmptyDictionaryWhenMetaInformationIsValid()
         {
             // Arrange
-            var csvService = new CsvService();
+            var formValidatorMock = new Mock<IFormValidator>();
+            formValidatorMock.Setup(x => x.IsRowFormatValid(It.IsAny<string[]>())).Returns(true);
+            var csvService = new CsvService(formValidatorMock.Object);
             string[] metaInformation = new string[2] { "col1;col2;col3", "1;2;3;4" };
 
             // Act 
@@ -226,6 +187,7 @@ Sunny;Hot;High;Weak;Yes;";
 
             // Assert
             Assert.NotEmpty(columns);
+            formValidatorMock.Verify(x => x.IsRowFormatValid(It.IsAny<string[]>()), Times.Once);
         }
     }
 }

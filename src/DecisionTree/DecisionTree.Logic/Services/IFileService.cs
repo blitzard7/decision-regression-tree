@@ -3,8 +3,9 @@ using System.Collections.Generic;
 
 namespace DecisionTree.Logic.Services
 {
-    public interface ICsvReader
+    public interface IFileService
     {
-        string[] Read(string file);
+        string[] Import(string file);
+        void Export(string data);
     }
 }

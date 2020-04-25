@@ -1,9 +1,10 @@
 ﻿namespace DecisionTree.Logic.Validator
 {
-    public interface IValidator
+    public interface IFormValidator
     {
         bool IsMetaInformationFormatValid(string input);
         bool IsRowFormatValid(string[] rows);
+        bool IsRowFormatValid(string row);
         bool IsColumnFormatValid(string input);
         bool IsHeaderPresent(string input);
         bool IsDataPresent(string input);

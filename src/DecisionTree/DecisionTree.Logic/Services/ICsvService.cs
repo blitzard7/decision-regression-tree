@@ -11,7 +11,6 @@ namespace DecisionTree.Logic.Services
 
         IEnumerable<string> GetDataInformation(string file);
 
-        bool IsImportedFileValid(string file);
         Dictionary<string, List<string>> CreateColumns(string[] metaDataInformation);
     }
 }

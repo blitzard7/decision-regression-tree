@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace DecisionTree.Logic.Validator
 {
-    public class FormValidator : IValidator
+    public class FormValidator : IFormValidator
     {
         public const string ValidValueSeparator = ";";
         public const string ValidDataSeparator = "Data";
@@ -80,6 +80,8 @@ namespace DecisionTree.Logic.Validator
             return rows.All(x =>
             {
                 var data = x.Split(ValidValueSeparator, StringSplitOptions.RemoveEmptyEntries);
+
+                // what happens when there is only 1 column and 1 row?
                 if (data.Length <= 0 || data[0].Equals(x))
                 {
                     return false;
@@ -87,6 +89,19 @@ namespace DecisionTree.Logic.Validator
 
                 return true;
             });
+        }
+
+        public bool IsRowFormatValid(string row)
+        {
+            var data = row.Split(ValidValueSeparator, StringSplitOptions.RemoveEmptyEntries);
+
+            // what happens when there is only 1 column and 1 row?
+            if (data.Length <= 0 || data[0].Equals(row))
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

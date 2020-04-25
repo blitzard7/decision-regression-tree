@@ -1,12 +1,23 @@
-﻿using System;
+﻿using DecisionTree.Logic.IoC;
+using DecisionTree.Logic.Services;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace DecisionTree
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        private static IServiceProvider container;
+
+        public static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var services = new ServiceCollection();
+            container = IoCHelper.RegisterDependencies(services);
+            Console.WriteLine("Enter path to csv file to construct a Decision Tree:");
+            var file = Console.ReadLine();
+
+            var fileService = container.GetService<IFileService>();
+            fileService.Import(file);
         }
     }
 }

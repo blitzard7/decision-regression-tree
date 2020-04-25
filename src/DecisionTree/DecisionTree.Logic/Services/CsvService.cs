@@ -1,4 +1,5 @@
 ﻿using DecisionTree.Logic.Models;
+using DecisionTree.Logic.Validator;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +8,16 @@ namespace DecisionTree.Logic.Services
 {
     public class CsvService : ICsvService
     {
+        private readonly IFormValidator _formValidator;
+
+        public CsvService(IFormValidator formValidator)
+        {
+            _formValidator = formValidator ?? throw new ArgumentNullException(nameof(formValidator));
+        }
+
         public CsvData CreateCsvDataFromFile(string file)
         {
-            if (!IsImportedFileValid(file))
+            if (!_formValidator.IsMetaInformationFormatValid(file))
             {
                 throw new CsvInvalidException();
             }
@@ -29,7 +37,7 @@ namespace DecisionTree.Logic.Services
 
         public IEnumerable<string> GetHeaderInformation(string headerMetaData)
         {
-            var separator = ";";
+            var separator = FormValidator.ValidValueSeparator;
             var header = SplitDataAtGivenCharacter(headerMetaData, separator);
             if (!headerMetaData.Contains(separator))
             {
@@ -41,7 +49,7 @@ namespace DecisionTree.Logic.Services
 
         public IEnumerable<string> GetDataInformation(string file)
         {
-            var separator = ";";
+            var separator = FormValidator.ValidValueSeparator;
             if (!file.Contains(separator))
             {
                 return Array.Empty<string>();
@@ -58,12 +66,12 @@ namespace DecisionTree.Logic.Services
                 return false;
             }
 
-            if (!file.Contains("Data"))
+            if (!file.Contains(FormValidator.ValidDataSeparator))
             {
                 return false;
             }
 
-            if (file.StartsWith("Data"))
+            if (file.StartsWith(FormValidator.ValidDataSeparator))
             {
                 return false;
             }
@@ -78,23 +86,23 @@ namespace DecisionTree.Logic.Services
             var headerInformation = GetHeaderInformation(metaDataInformation[0]).ToArray();
             var dataInformation = SplitDataAtGivenCharacter(metaDataInformation[1], "\r\n").ToArray();
             var columns = new Dictionary<string, List<string>>();
+            var currentColValues = new List<string>();
+
+            if (!_formValidator.IsRowFormatValid(dataInformation))
+            { 
+                // throw invalid row exception?
+                return columns;
+            }
 
             for (int i = 0; i < headerInformation.Length; i++)
             {
                 var currentName = headerInformation[i];
-                var currentColValues = new List<string>();
 
                 for (int j = 0; j < dataInformation.Length; j++)
                 {
                     // validate column length and row data length 
                     var currentDataRow = dataInformation[j];
-                    if (!IsRowFormatValid(currentDataRow))
-                    {
-                        // throw invalid row exception?
-                        return columns;
-                    }
-
-                    var data = SplitDataAtGivenCharacter(currentDataRow, ";")[i];
+                    var data = SplitDataAtGivenCharacter(currentDataRow, FormValidator.ValidValueSeparator)[i];
                     currentColValues.Add(data);
                 }
 
@@ -104,15 +112,9 @@ namespace DecisionTree.Logic.Services
             return columns;
         }
 
-        private bool IsRowFormatValid(string row)
-        {
-            const string Separator = ";";
-            return row.Contains(Separator);
-        }
-
         private IEnumerable<string> SplitMetaDataInformationFromRawFileContent(string fileContent)
         {
-            var separator = "Data";
+            var separator = FormValidator.ValidDataSeparator;
             var rawMetaData = SplitDataAtGivenCharacter(fileContent, separator);
             return rawMetaData;
         }

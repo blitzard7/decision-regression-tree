@@ -7,6 +7,11 @@
 
   <ItemGroup>
     <Folder Include="Data\" />
+    <Folder Include="UI\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DecisionTree.Logic\DecisionTree.Logic.csproj" />
   </ItemGroup>
 
 </Project>
