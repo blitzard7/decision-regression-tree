@@ -86,7 +86,6 @@ namespace DecisionTree.Logic.Services
             var headerInformation = GetHeaderInformation(metaDataInformation[0]).ToArray();
             var dataInformation = SplitDataAtGivenCharacter(metaDataInformation[1], "\r\n").ToArray();
             var columns = new Dictionary<string, List<string>>();
-            var currentColValues = new List<string>();
 
             if (!_formValidator.IsRowFormatValid(dataInformation))
             { 
@@ -97,6 +96,7 @@ namespace DecisionTree.Logic.Services
             for (int i = 0; i < headerInformation.Length; i++)
             {
                 var currentName = headerInformation[i];
+                var currentColValues = new List<string>();
 
                 for (int j = 0; j < dataInformation.Length; j++)
                 {
