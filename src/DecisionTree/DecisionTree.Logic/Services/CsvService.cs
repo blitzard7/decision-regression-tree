@@ -23,11 +23,13 @@ namespace DecisionTree.Logic.Services
             }
 
             var metaDataInformation = SplitMetaDataInformationFromRawFileContent(file).ToArray();
+            var headerInformation = GetHeaderInformation(metaDataInformation[0]).ToList();
             var columns = CreateColumns(metaDataInformation);        
             var rows = GetDataInformation(metaDataInformation[1]).ToList();
 
             var csvData = new CsvData
             {
+                Headers = headerInformation,
                 Columns = columns,
                 Rows = rows
             };

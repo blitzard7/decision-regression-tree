@@ -8,9 +8,11 @@ namespace DecisionTree.Logic.Models
         {
             Columns = new Dictionary<string, List<string>>();
             Rows = new List<string>();
+            Headers = new List<string>();
         }
 
         public Dictionary<string, List<string>> Columns { get; set; }
         public List<string> Rows { get; set; }
+        public List<string> Headers { get; set; }
     }
 }
