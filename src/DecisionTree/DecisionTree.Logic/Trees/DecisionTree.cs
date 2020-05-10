@@ -5,6 +5,10 @@ using System.Linq;
 
 namespace DecisionTree.Logic.Trees
 {
+    /* TODO:
+     * CalculateEntropy, IG and Split should be placed in Node
+     */ 
+
     public class DecisionTree : IDecisionTree
     {
         private readonly INode _root = new Node();
