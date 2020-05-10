@@ -22,10 +22,12 @@ namespace DecisionTree.Logic
 
             for (int i = 0; i < tmpDistinct.Count; i++)
             {
-                var current = tmpAllElements[i];
-                var amount = tmpAllElements.Count(x => x == current);
-
-                occurences.Add(current, amount);
+                var current = tmpDistinct[i];
+                var amount = tmpAllElements.Count(x => x.Contains(current));
+                if (amount != 0)
+                {
+                    occurences.Add(current, amount);
+                }
             }
 
             return occurences;

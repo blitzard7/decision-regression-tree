@@ -25,6 +25,16 @@ namespace DecisionTree.Logic.Tests
                 "Outlook",
                 "Windy"
             };
+            var humidity = "Humidity";
+            var humidityData = new List<string>
+            {
+                "high",
+                "high",
+                "normal",
+                "high",
+                "high",
+                "normal"
+            };
             var needUmbrella = "NeedUmbrella";
             var needUmbrellaData = new List<string>
             {
@@ -37,18 +47,19 @@ namespace DecisionTree.Logic.Tests
             };
             var rows = new List<string>()
             {
-                "Sunny;Yes;",
-                "Windy;No;",
-                "Sunny;No;",
-                "Sunny;No;",
-                "Outlook;Yes",
-                "Windy;No;"
+                "Sunny;high;Yes;",
+                "Windy;high;No;",
+                "Sunny;normal;No;",
+                "Sunny;high;Yes;",
+                "Outlook;high;Yes",
+                "Windy;normal;No;"
             };
             columns.Add(outlook, outlookData);
+            columns.Add(humidity, humidityData);
             columns.Add(needUmbrella, needUmbrellaData);
             csvData.Columns = columns;
             csvData.Rows.AddRange(rows);
-            csvData.Headers.AddRange(new List<string>() { outlook, needUmbrella });
+            csvData.Headers.AddRange(new List<string>() { outlook, humidity, needUmbrella });
 
             // Act
             var result = decisionTree.BuildTree(csvData);

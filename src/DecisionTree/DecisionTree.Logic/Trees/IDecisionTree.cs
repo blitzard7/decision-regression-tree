@@ -1,8 +1,10 @@
-﻿namespace DecisionTree.Logic.Trees
+﻿using System.Collections.Generic;
+
+namespace DecisionTree.Logic.Trees
 {
     public interface IDecisionTree : ITree
     {
-        decimal CalculateEntropy();
-        decimal CalculateInformationGain();
+        double CalculateEntropy(List<string> distinctResultValues, List<string> resultValues);
+        double CalculateInformationGain(double totalEntropy, double featureEntropy);
     }
 }
