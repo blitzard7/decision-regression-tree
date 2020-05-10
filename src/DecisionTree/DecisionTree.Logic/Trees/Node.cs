@@ -2,6 +2,9 @@
 
 namespace DecisionTree.Logic.Trees
 {
+    /* TODO:
+     * Build Method where Tree is built recursivly.
+    */
     public class Node : INode
     {
         public Node()
