@@ -9,7 +9,7 @@ namespace DecisionTree.Logic.Services
         
         IEnumerable<string> GetHeaderInformation(string file);
 
-        IEnumerable<string> GetDataInformation(string file);
+        IEnumerable<string> GetRowValues(string file);
 
         Dictionary<string, List<string>> CreateColumns(string[] metaDataInformation);
     }

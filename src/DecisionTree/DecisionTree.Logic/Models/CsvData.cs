@@ -1,7 +1,9 @@
 ﻿using DecisionTree.Logic.Helper;
+using DecisionTree.Logic.Validator;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 namespace DecisionTree.Logic.Models
 {
@@ -38,7 +40,7 @@ namespace DecisionTree.Logic.Models
             return Calculation.CalculateEntropy(distinctResultValues, ResultSetValues);
         }
 
-        public CsvData Fitter(string featureName, string distinctValue)
+        public CsvData Filter(string featureName, string distinctValue)
         {
             // collect row data for given distinctValue.
             var headers = new List<string>();
@@ -51,14 +53,16 @@ namespace DecisionTree.Logic.Models
             //  rows should not contain distinctValue
             
             headers.AddRange(this.Headers.SkipWhile(x => x == featureName));
-            var relevantRows = this.Rows.Where(x => x.ToLower().Contains(distinctValue)).ToList();
+            var relevantRows = this.Rows.Where(x => x.Contains(distinctValue)).ToList();
             newRows.AddRange(from item in relevantRows
-                             let current = item.ToLower().Replace($"{distinctValue};", string.Empty)
-                             select current);
+                             let current = item.Replace($"{distinctValue};", string.Empty)
+                             select current.Trim('\r', '\n'));
 
             foreach (var header in headers)
             {
-                columns.Add(header, this.Columns[header]);
+                var headerIndex = headers.IndexOf(header);
+                var columnValues = GetColumnValues(newRows, headerIndex);
+                columns.Add(header, columnValues);
             }
 
             var dataSubSet = new CsvData
@@ -74,6 +78,11 @@ namespace DecisionTree.Logic.Models
         private List<string> GetResultSetValues()
         {
             return this.Columns[ResultCategory];
+        }
+
+        private List<string> GetColumnValues(List<string> rows, int headerIndex)
+        {
+            return rows.Select(x => x.Split(FormValidator.ValidValueSeparator, StringSplitOptions.RemoveEmptyEntries)[headerIndex]).ToList();
         }
     }
 }

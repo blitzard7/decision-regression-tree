@@ -18,12 +18,12 @@ namespace DecisionTree.Logic.Tests
             var outlook = "Outlook";
             var outlookData = new List<string>
             {
-                "Sunny",
-                "Windy",
-                "Sunny",
-                "Sunny",
-                "Outlook",
-                "Windy"
+                "sunny",
+                "windy",
+                "sunny",
+                "sunny",
+                "outlook",
+                "windy"
             };
             var humidity = "Humidity";
             var humidityData = new List<string>
@@ -47,12 +47,12 @@ namespace DecisionTree.Logic.Tests
             };
             var rows = new List<string>()
             {
-                "Sunny;high;Yes;",
-                "Windy;high;No;",
-                "Sunny;normal;No;",
-                "Sunny;high;Yes;",
-                "Outlook;high;Yes",
-                "Windy;normal;No;"
+                "sunny;high;Yes;",
+                "windy;high;No;",
+                "sunny;normal;No;",
+                "sunny;high;Yes;",
+                "outlook;high;Yes",
+                "windy;normal;No;"
             };
             columns.Add(outlook, outlookData);
             columns.Add(humidity, humidityData);

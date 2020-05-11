@@ -1,11 +1,8 @@
-﻿using DecisionTree.Logic.Models;
-using System.Collections.Generic;
-
-namespace DecisionTree.Logic.Services
+﻿namespace DecisionTree.Logic.Services
 {
     public interface IFileService
     {
-        string[] Import(string file);
+        string Import(string file);
         void Export(string data);
     }
 }

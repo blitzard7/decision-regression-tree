@@ -59,7 +59,7 @@ namespace DecisionTree.Logic.Tests
             csvData.Headers.AddRange(new List<string>() { outlook, humidity, needUmbrella });
 
             // Act
-            var fitter = csvData.Fitter(outlook, "sunny");
+            var fitter = csvData.Filter(outlook, "sunny");
 
             // Assert
             Assert.DoesNotContain("sunny", fitter.Rows);

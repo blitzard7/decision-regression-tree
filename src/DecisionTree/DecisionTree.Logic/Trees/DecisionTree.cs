@@ -13,9 +13,7 @@ namespace DecisionTree.Logic.Trees
 
     public class DecisionTree : IDecisionTree
     {
-        private readonly INode _root = new Node();
-        private readonly List<string> _resultSetValues = new List<string>();
-        private readonly List<string> _distinctResultValues = new List<string>();
+        public INode Root { get; private set; }
 
         // Build tree from given CsvData
         // Recursive Task?
@@ -27,13 +25,13 @@ namespace DecisionTree.Logic.Trees
             // 1. determine root node (column) of tree
             // 2. calculate for each search key of current node (first node is root) the entropy and IG for next node (child)
             // 3. repeat 2 until no split is needed (meaning that all leafe nodes contain homogeneous data)
-            
+
             // Assumption: Last column represents query result.
             // For E(G) we have to extract all result values 
-            var root = new Node();
-            root.Build(data);
+            Root = new Node();
+            Root.Build(data);
             // After getting feature for SPLIT, we have to Create the node
-            return null;
+            return this;
         }
 
         public void PostPruning()
