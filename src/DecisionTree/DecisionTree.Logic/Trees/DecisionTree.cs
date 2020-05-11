@@ -3,6 +3,7 @@ using DecisionTree.Logic.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace DecisionTree.Logic.Trees
 {
@@ -29,13 +30,8 @@ namespace DecisionTree.Logic.Trees
             
             // Assumption: Last column represents query result.
             // For E(G) we have to extract all result values 
-            var resultCategory = data.Headers[^1];
-            _resultSetValues.AddRange(data.Columns[resultCategory]);
-            var distinctResultValues = data.GetUniqueColumnValues(resultCategory).ToList();
-            _distinctResultValues.AddRange(distinctResultValues);
-
-            var eg = Calculation.CalculateEntropy(_distinctResultValues, _resultSetValues);
-
+            var root = new Node();
+            root.Build(data);
             // After getting feature for SPLIT, we have to Create the node
             return null;
         }

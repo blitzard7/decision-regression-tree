@@ -20,7 +20,7 @@ namespace DecisionTree.Logic.Helper
         public static double CalculateInformationGain(double totalEntropy, double featureEntropy) => totalEntropy - featureEntropy;
 
 
-        public static IEnumerable<(string, double)> CalculateInformationGainOfFeatures(CsvData data, double totalEntropy, List<string> resultSetValues)
+        public static IEnumerable<(string, double)> CalculateInformationGainOfFeatures(CsvData data)
         {
             var informationGainOfFeatures = new List<(string, double)>();
 
@@ -40,8 +40,8 @@ namespace DecisionTree.Logic.Helper
                     dataSetOfCurrentColumn.Add(val, specificRows);
                 }
 
-                var eCurrent = CalculateEntropyOfFeature(dataSetOfCurrentColumn, resultSetValues);
-                var igCurrent = CalculateInformationGain(totalEntropy, eCurrent);
+                var eCurrent = CalculateEntropyOfFeature(dataSetOfCurrentColumn, data.ResultSetValues);
+                var igCurrent = CalculateInformationGain(data.EG, eCurrent);
 
                 informationGainOfFeatures.Add((currentColumn, igCurrent));
             }

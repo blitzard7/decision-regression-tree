@@ -1,4 +1,5 @@
-﻿using DecisionTree.Logic.Models;
+﻿using DecisionTree.Logic.Helper;
+using DecisionTree.Logic.Models;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,39 +15,54 @@ namespace DecisionTree.Logic.Trees
             Children = new Dictionary<string, INode>();
         }
 
-        public string SearchString { get; set; }
+        public string Feature { get; set; }
         public INode Parent { get; set; }
         public Dictionary<string, INode> Children { get; set; }
         public bool IsLeaf => Children.Values.Count == 0;
 
         public INode Build(CsvData data)
         {
-            if (ContainsHomogeneousData(this))
+            if (ContainsHomogeneousData(data))
             {
                 return this;
             }
 
-            // feature = CalculateFeature()
-            /* for (distinctValue in feature)
-             *      node = new Node()
-             *      node.Build(c.Fitter(distinctValue))
-             *      this.Children.Append(node)
-             */
+            var feature = CalculateFeature(data);
+            var featureValuesDistinct = feature.Values.Distinct();
+            foreach (var distinctValue in featureValuesDistinct)
+            {
+                var node = new Node();
+                node.Feature = feature.Name;
+
+                // If feature selected, the subset of csvdata should not contain the actual feature in header anymore.
+                node.Build(data.Fitter(feature.Name, distinctValue));
+                this.Children.Add(distinctValue, node);
+            }
 
             return this;
         }
 
-        public bool ContainsHomogeneousData(INode node)
+        public bool ContainsHomogeneousData(CsvData data)
         {
-            throw new System.NotImplementedException();
+            // Check if rows contains only homogeneous data.
+            // need to calculate the entropy 
+            return data.EG == 0;
         }
 
-        private void CalculateFeature()
+        private Feature CalculateFeature(CsvData data)
         {
-            //var informationGainOfFeatures = CalculateInformationGainOfFeatures(data, eg).ToList();
+            var informationGainOfFeatures = Calculation.CalculateInformationGainOfFeatures(data).ToList();
 
             // We have to calculate for each feature the IG and then select MAX(FeatureIG).
-            //var toSelectFeature = SelectFeatureForSplit(informationGainOfFeatures);
+            var toSelectFeature = SelectFeatureForSplit(informationGainOfFeatures);
+            var toSelectFeatureValues = data.Columns[toSelectFeature.Item1];
+            var feature = new Feature()
+            {
+                Name = toSelectFeature.Item1,
+                Values = toSelectFeatureValues
+            };
+
+            return feature;
         }
 
         private (string, double) SelectFeatureForSplit(List<(string, double)> informationGainOfFeatures)
