@@ -21,6 +21,8 @@ namespace DecisionTree.Logic.Trees
         public Dictionary<string, INode> Children { get; set; }
         public bool IsLeaf => Children.Values.Count == 0;
 
+        public Dictionary<string, int> CurrentClassification { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public void Build(CsvData data)
         {
             if (ContainsHomogeneousData(data))
