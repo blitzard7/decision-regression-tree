@@ -21,10 +21,13 @@ namespace DecisionTree.Logic.Trees
         public Dictionary<string, INode> Children { get; set; }
         public bool IsLeaf => Children.Values.Count == 0;
 
-        public Dictionary<string, int> CurrentClassification { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public Dictionary<string, int> CurrentClassification { get; private set; }
 
         public void Build(CsvData data)
         {
+            var currentDistinctResultSet = data.ResultSetValues.Distinct();
+            CurrentClassification = currentDistinctResultSet.CalculateOccurenceOfGivenEntries(data.ResultSetValues);
+
             if (ContainsHomogeneousData(data))
             {
                 return;
@@ -40,6 +43,8 @@ namespace DecisionTree.Logic.Trees
                     Feature = feature.Name
                 };
                 var currentData = data.Filter(feature.Name, distinctValue);
+
+                // calculate current classification (from current data set calculate how many times each distinct resultValue occurs)
                 // If feature selected, the subset of csvdata should not contain the actual feature in header anymore.
                 node.Build(currentData);
                 this.Children.Add(distinctValue, node);
