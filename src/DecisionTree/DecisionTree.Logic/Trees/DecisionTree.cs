@@ -4,7 +4,8 @@ using System;
 namespace DecisionTree.Logic.Trees
 {
     /* TODO:
-     * CalculateEntropy, IG and Split should be placed in Node
+     * Query Tree and return path
+     * Node should be adapted to contain the resultValue
      */
 
     public class DecisionTree : IDecisionTree
@@ -26,7 +27,7 @@ namespace DecisionTree.Logic.Trees
             // For E(G) we have to extract all result values 
             Root = new Node();
             Root.Start(data);
-            // After getting feature for SPLIT, we have to Create the node
+            
             return this;
         }
 
@@ -37,6 +38,15 @@ namespace DecisionTree.Logic.Trees
 
         public INode Query(string searchKeys)
         {
+            // If there is no tree then return null.
+            if (Root == null)
+            {
+                return null;
+            }
+
+            // Search keys should be like:
+            // (string featureName, string value) e.g. (Outlook, sunny) 
+            // therefore we expect as input a List<(string,string)>
             throw new NotImplementedException();
         }
     }

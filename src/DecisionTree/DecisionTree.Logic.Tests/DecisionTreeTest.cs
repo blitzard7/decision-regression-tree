@@ -1,7 +1,5 @@
-﻿using DecisionTree.Logic.Models;
-using System;
+﻿using DecisionTree.Logic.Trees;
 using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace DecisionTree.Logic.Tests
@@ -9,63 +7,43 @@ namespace DecisionTree.Logic.Tests
     public class DecisionTreeTest
     {
         [Fact]
-        public void BuildTree_ShouldReturnNull()
+        public void Query_ShouldReturnNodeWithPathToClassificationOfQueriedInput()
         {
             // Arrange
-            var decisionTree = new Trees.DecisionTree();
-            var csvData = new CsvData();
-            var columns = new Dictionary<string, List<string>>();
-            var outlook = "Outlook";
-            var outlookData = new List<string>
-            {
-                "sunny",
-                "windy",
-                "sunny",
-                "sunny",
-                "outlook",
-                "windy"
-            };
-            var humidity = "Humidity";
-            var humidityData = new List<string>
-            {
-                "high",
-                "high",
-                "normal",
-                "high",
-                "high",
-                "normal"
-            };
-            var needUmbrella = "NeedUmbrella";
-            var needUmbrellaData = new List<string>
-            {
-                "Yes",
-                "No",
-                "No",
-                "No",
-                "Yes",
-                "No"
-            };
-            var rows = new List<string>()
-            {
-                "sunny;high;Yes;",
-                "windy;high;No;",
-                "sunny;normal;No;",
-                "sunny;high;Yes;",
-                "outlook;high;Yes",
-                "windy;normal;No;"
-            };
-            columns.Add(outlook, outlookData);
-            columns.Add(humidity, humidityData);
-            columns.Add(needUmbrella, needUmbrellaData);
-            csvData.Columns = columns;
-            csvData.Rows.AddRange(rows);
-            csvData.Headers.AddRange(new List<string>() { outlook, humidity, needUmbrella });
+            var rootNode = new Node();
+            rootNode.Feature = "Swimming Suit";
+            var noneSwimmingSuidChild = new Node();
+            noneSwimmingSuidChild.Children = new Dictionary<string, INode>();
+            noneSwimmingSuidChild.CurrentClassification.Add("No", 2);
 
-            // Act
-            var result = decisionTree.BuildTree(csvData);
+            var smallSwimmingSuidChild = new Node();
+            smallSwimmingSuidChild.Children = new Dictionary<string, INode>();
+            smallSwimmingSuidChild.CurrentClassification.Add("No", 2);
+            rootNode.Children.Add("None", noneSwimmingSuidChild);
+            rootNode.Children.Add("Small", smallSwimmingSuidChild);
+
+            var temperatureNode = new Node();
+            temperatureNode.Feature = "Water Temperature";
+            temperatureNode.Children = new Dictionary<string, INode>();
+            temperatureNode.CurrentClassification.Add("No", 1);
+            temperatureNode.CurrentClassification.Add("Yes", 1);
+            var coldSubNode = new Node();
+            coldSubNode.Children = null;
+            coldSubNode.CurrentClassification.Add("No", 1);
+
+            var warmSubNode = new Node();
+            warmSubNode.Children = null;
+            warmSubNode.CurrentClassification.Add("Yes", 1);
+            temperatureNode.Children.Add("Cold", coldSubNode);
+            temperatureNode.Children.Add("Warm", warmSubNode);
+
+            var goodSwimmingSuidChild = new Node();
+            goodSwimmingSuidChild.Children.Add("Good", temperatureNode);
+            rootNode.Children.Add("Good", goodSwimmingSuidChild);
+
+            // Act 
 
             // Assert
-            Assert.Null(result);
         }
     }
 }

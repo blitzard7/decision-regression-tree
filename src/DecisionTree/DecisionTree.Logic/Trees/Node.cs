@@ -22,7 +22,7 @@ namespace DecisionTree.Logic.Trees
 
         public bool IsLeaf => Children.Values.Count == 0;
 
-        public Dictionary<string, int> CurrentClassification { get; private set; }
+        public Dictionary<string, int> CurrentClassification { get; set; }
 
         public double NodeEntropy { get; private set; }
 
