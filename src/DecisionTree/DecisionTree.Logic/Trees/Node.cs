@@ -22,6 +22,8 @@ namespace DecisionTree.Logic.Trees
 
         public bool IsLeaf => Children.Values.Count == 0;
 
+        public string Result { get; set; }
+
         public Dictionary<string, int> CurrentClassification { get; set; }
 
         public double NodeEntropy { get; private set; }
@@ -84,8 +86,14 @@ namespace DecisionTree.Logic.Trees
                 throw new ArgumentException("Result values where empty.");
             }
 
-            // data.headers.count == 1 -> represents the ResultCategory therefore we have homogeneous data.
-            return distinctResultValues.Count == 1 || data.Headers.Count == 1;
+            if (distinctResultValues.Count == 1 || data.Headers.Count == 1)
+            {
+                // data.headers.count == 1 -> represents the ResultCategory therefore we have homogeneous data.
+                Result = distinctResultValues[0];
+                return true;
+            }
+
+            return false;
         }
 
         private Feature CalculateFeature(CsvData data)

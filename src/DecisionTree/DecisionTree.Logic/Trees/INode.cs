@@ -11,6 +11,7 @@ namespace DecisionTree.Logic.Trees
         double TotalEntropy { get; }
         double NodeEntropy { get; }
         double NodeInformationGain { get; }
+        string Result { get; }
         Dictionary<string, int> CurrentClassification { get; }
         Dictionary<string, INode> Children { get; set; }
         void Start(CsvData data);

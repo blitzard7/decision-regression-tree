@@ -1,5 +1,6 @@
 ﻿using DecisionTree.Logic.Trees;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace DecisionTree.Logic.Tests
@@ -17,6 +18,7 @@ namespace DecisionTree.Logic.Tests
             };
             var noneSwimmingSuitChild = new Node
             {
+                Result = "No",
                 Parent = rootNode,
                 Children = new Dictionary<string, INode>()
             };
@@ -24,6 +26,7 @@ namespace DecisionTree.Logic.Tests
 
             var smallSwimmingSuidChild = new Node
             {
+                Result = "No",
                 Parent = rootNode,
                 Children = new Dictionary<string, INode>()
             };
@@ -41,12 +44,14 @@ namespace DecisionTree.Logic.Tests
             temperatureNode.CurrentClassification.Add("Yes", 1);
             var coldSubNode = new Node
             {
+                Result = "No",
                 Parent = temperatureNode
             };
             coldSubNode.CurrentClassification.Add("No", 1);
 
             var warmSubNode = new Node
             {
+                Result = "Yes",
                 Parent = temperatureNode
             };
             warmSubNode.CurrentClassification.Add("Yes", 1);
@@ -75,9 +80,11 @@ namespace DecisionTree.Logic.Tests
             };
 
             var node = dt.Query(list);
+            var result = node.Children.First(x => x.Value.IsLeaf);
 
             // Assert
             Assert.Contains("None", node.Children.Keys);
+            Assert.Equal("No", result.Value.Result);
         }
     }
 }
