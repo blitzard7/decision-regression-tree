@@ -10,44 +10,70 @@ namespace DecisionTree.Logic.Tests
         public void Query_ShouldReturnNodeWithPathToClassificationOfQueriedInput()
         {
             // Arrange
-            var rootNode = new Node();
-            rootNode.Feature = "Swimming Suit";
-            var noneSwimmingSuitChild = new Node();
-            noneSwimmingSuitChild.Children = new Dictionary<string, INode>();
+            var rootNode = new Node
+            {
+                Parent = null,
+                Feature = "Swimming Suit"
+            };
+            var noneSwimmingSuitChild = new Node
+            {
+                Parent = rootNode,
+                Children = new Dictionary<string, INode>()
+            };
             noneSwimmingSuitChild.CurrentClassification.Add("No", 2);
 
-            var smallSwimmingSuidChild = new Node();
-            smallSwimmingSuidChild.Children = new Dictionary<string, INode>();
+            var smallSwimmingSuidChild = new Node
+            {
+                Parent = rootNode,
+                Children = new Dictionary<string, INode>()
+            };
             smallSwimmingSuidChild.CurrentClassification.Add("No", 2);
             rootNode.Children.Add("None", noneSwimmingSuitChild);
             rootNode.Children.Add("Small", smallSwimmingSuidChild);
 
-            var temperatureNode = new Node();
-            temperatureNode.Feature = "Water Temperature";
-            temperatureNode.Children = new Dictionary<string, INode>();
+            var temperatureNode = new Node
+            {
+                Parent = rootNode,
+                Feature = "Water Temperature",
+                Children = new Dictionary<string, INode>()
+            };
             temperatureNode.CurrentClassification.Add("No", 1);
             temperatureNode.CurrentClassification.Add("Yes", 1);
-            var coldSubNode = new Node();
+            var coldSubNode = new Node
+            {
+                Parent = temperatureNode
+            };
             coldSubNode.CurrentClassification.Add("No", 1);
 
-            var warmSubNode = new Node();
+            var warmSubNode = new Node
+            {
+                Parent = temperatureNode
+            };
             warmSubNode.CurrentClassification.Add("Yes", 1);
             temperatureNode.Children.Add("Cold", coldSubNode);
             temperatureNode.Children.Add("Warm", warmSubNode);
 
-            var goodSwimmingSuidChild = new Node();
+            var goodSwimmingSuidChild = new Node
+            {
+                Parent = rootNode
+            };
             goodSwimmingSuidChild.Children.Add("Good", temperatureNode);
             rootNode.Children.Add("Good", temperatureNode);
             rootNode.CurrentClassification.Add("No", 5);
             rootNode.CurrentClassification.Add("Yes", 1);
 
-            var dt = new Trees.DecisionTree();
-            dt.Root = rootNode;
+            var dt = new Trees.DecisionTree
+            {
+                Root = rootNode
+            };
 
             // Act 
-            var list = new List<(string, string)>();
-            list.Add(("Swimming Suit", "Good"));
-            list.Add(("Water Temperature", "Warm"));
+            var list = new List<(string, string)>
+            {
+                ("Swimming Suit", "None"),
+                ("Water Temperature", "Warm")
+            };
+
             var node = dt.Query(list);
 
             // Assert

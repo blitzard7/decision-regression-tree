@@ -40,6 +40,7 @@ namespace DecisionTree.Logic.Trees
 
         public INode Query(List<(string featureName, string featureValue)> searchKeys)
         {
+            // List of searchkey should contain rootfeature name as first element.
             // If there is no tree then return null.
             if (Root == null)
             {
@@ -48,79 +49,59 @@ namespace DecisionTree.Logic.Trees
 
             var tmpRoot = Root;
             var queryNode = new Node();
-            foreach (var (featureName, featureValue) in searchKeys)
-            {
-                var tmpNode = new Node();
-                tmpNode.Children = GetSubsetOfNode(tmpRoot, (featureName, featureValue));
-                var a = FindPaths(searchKeys, (featureName, featureValue), tmpNode.Children);
-                if (tmpRoot.Feature == featureName)
-                {
-                    tmpNode.Feature = featureName;
-                    var subNode = tmpRoot.Children[featureValue];
-                    var tmpSub = new Node();
-                    tmpSub.Children = GetSubsetOfNode(subNode, (featureName, featureValue));
-                    tmpRoot = subNode;
-                    tmpNode.Children.Add(featureValue, subNode);
-                }
 
-                queryNode.Children.Add(tmpNode.Feature, tmpNode);
+            // Assumption Rootnode is on index 0.
+            var (featureName, featureValue) = searchKeys[0];
+            var foundNode = QueryNode((featureName, featureValue));
+            var foundNodeAllLeaves = foundNode.Children.All(x => x.Value.IsLeaf);
+
+            if (foundNodeAllLeaves)
+            {
+                return foundNode;
+            }
+            
+            if (foundNode.Children.Count != 0)
+            {
+                for (int i = 1; i < searchKeys.Count; i++)
+                {
+                    var currentSearch = searchKeys[i];
+                    GetSubsetOfNode(foundNode, currentSearch, featureValue);
+                }
             }
 
             // Search keys should be like:
             // (string featureName, string value) e.g. (Outlook, sunny) 
             // therefore we expect as input a List<(string,string)>
-            return queryNode;
+            return foundNode;
         }
 
-        private List<List<string>> FindPaths(List<(string featureName, string featureVal)> seachkeys, (string featureName, string featureVal) currentKey , Dictionary<string, INode> tree)
+        private INode QueryNode((string featureName, string featureValue) searchKey)
         {
-            List<List<string>> paths = new List<List<string>>();
+            var tmpNode = Root;
+            Node foundNode = new Node();
 
-            foreach (var (featureName, featureVal) in seachkeys)
+            if (tmpNode.Feature == searchKey.featureName)
             {
-                if (tree.ContainsKey(currentKey.featureVal))
-                {
-                    var treeNode = tree[currentKey.featureVal];
-                    foreach (var node in treeNode.Children)
-                    {
-                        var subPaths = FindPaths(seachkeys, (featureName, featureVal), tree);
-                        foreach (var subPath in subPaths)
-                        {
-                            subPath.Insert(0, currentKey.featureVal);
-                            paths.Add(subPath);
-                        }
-                    }
-                }
-                else
-                {
-                    paths.Add(new List<string>() { currentKey.featureVal });
-                }
+                foundNode.Feature = tmpNode.Feature;
+                var childNode = tmpNode.Children[searchKey.featureValue];
+                foundNode.Children.Add(searchKey.featureValue, childNode);
             }
-           
-            return paths;
+
+            return foundNode;
         }
 
-        private void findPaths(int root, Dictionary<int, List<int>> tree, List<List<int>> pathList, List<int> visitedNodes)
+        private Dictionary<string, INode> GetSubsetOfNode(INode node, (string featureName, string featureValue) searchKey, string rootKey)
         {
-            visitedNodes.Add(root);
-            if (tree.ContainsKey(root))
-            {
-                foreach (int v in tree[root])
-                {
-                    findPaths(v, tree, pathList, visitedNodes);
-                    visitedNodes.RemoveAt(visitedNodes.Count - 1);
-                }
-            }
-            else
-            {
-                pathList.Add(new List<int>(visitedNodes));
-            }
-        }
-
-        private Dictionary<string, INode> GetSubsetOfNode(INode node, (string featureName, string featureValue) searchKey)
-        {
-            var subset = node.Children.Where(s => s.Key == searchKey.featureValue)
+            var subset = node.Children.Where(s => s.Value.Children.ContainsKey(searchKey.featureValue))
                         .ToDictionary(dict => dict.Key, dict => dict.Value);
+
+            // we have to get the keys which are not asked from the children dictionary.
+            var toDeleteKeys = subset[rootKey].Children.Keys.Where(x => x != searchKey.featureValue).ToList();
+            foreach (var toDelete in toDeleteKeys)
+            {
+                // each key should be removed since we are looking for searchKey.featureValue
+                subset[rootKey].Children.Remove(toDelete);
+            }
 
             return subset;
         }
