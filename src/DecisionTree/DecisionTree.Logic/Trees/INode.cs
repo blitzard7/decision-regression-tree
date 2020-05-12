@@ -7,9 +7,9 @@ namespace DecisionTree.Logic.Trees
     {
         INode Parent { get; set; }
         bool IsLeaf { get; }
-        string Feature { get; set; }
+        string Feature { get; }
         Dictionary<string, INode> Children { get; set; }
-        Dictionary<string, int> CurrentClassification { get; }
+        void Start(CsvData data);
         void Build(CsvData data);
         bool ContainsHomogeneousData(CsvData data);
     }

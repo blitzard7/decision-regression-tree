@@ -1,15 +1,11 @@
-﻿using DecisionTree.Logic.Helper;
-using DecisionTree.Logic.Models;
+﻿using DecisionTree.Logic.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
 
 namespace DecisionTree.Logic.Trees
 {
     /* TODO:
      * CalculateEntropy, IG and Split should be placed in Node
-     */ 
+     */
 
     public class DecisionTree : IDecisionTree
     {
@@ -29,7 +25,7 @@ namespace DecisionTree.Logic.Trees
             // Assumption: Last column represents query result.
             // For E(G) we have to extract all result values 
             Root = new Node();
-            Root.Build(data);
+            Root.Start(data);
             // After getting feature for SPLIT, we have to Create the node
             return this;
         }
