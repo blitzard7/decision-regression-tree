@@ -49,24 +49,6 @@ namespace DecisionTree.Logic.Tests
             Assert.Empty(header);
         }
 
-        [Theory]
-        [InlineData("")]
-        [InlineData("123456")]
-        [InlineData("asdf")]
-        [InlineData("row1,row2,row3,row4")]
-        public void GetDataInformation_ShouldReturnEmptyListWhenNoDataGiven(string input)
-        {
-            // Arrange
-            var formValidatorMock = new Mock<IFormValidator>();
-            var csvService = new CsvService(formValidatorMock.Object);
-
-            // Act 
-            var data = csvService.GetDataInformation(input);
-
-            // Assert
-            Assert.Empty(data);
-        }
-
         [Fact]
         public void GetDataInformation_ShouldReturnSplitDataInformation()
         {
@@ -75,17 +57,13 @@ namespace DecisionTree.Logic.Tests
             var csvService = new CsvService(formValidatorMock.Object);
             var expected = new List<string>()
             {
-                "Sunny",
-                "Hot",
-                "High",
-                "Weak",
-                "Yes"
+                "Sunny;Hot;High;Weak;Yes;"
             };
 
             var input = "Sunny;Hot;High;Weak;Yes;";
 
             // Act 
-            var data = csvService.GetDataInformation(input);
+            var data = csvService.GetRowValues(input);
 
             // Assert
             Assert.Equal(expected, data);

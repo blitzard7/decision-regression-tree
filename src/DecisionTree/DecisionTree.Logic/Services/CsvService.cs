@@ -25,7 +25,7 @@ namespace DecisionTree.Logic.Services
             var metaDataInformation = SplitMetaDataInformationFromRawFileContent(file).ToArray();
             var headerInformation = GetHeaderInformation(metaDataInformation[0]).ToList();
             var columns = CreateColumns(metaDataInformation);        
-            var rows = GetDataInformation(metaDataInformation[1]).ToList();
+            var rows = GetRowValues(metaDataInformation[1]).ToList();
 
             var csvData = new CsvData
             {
@@ -40,7 +40,14 @@ namespace DecisionTree.Logic.Services
         public IEnumerable<string> GetHeaderInformation(string headerMetaData)
         {
             var separator = FormValidator.ValidValueSeparator;
-            var header = SplitDataAtGivenCharacter(headerMetaData, separator);
+            var header = SplitDataAtGivenCharacter(headerMetaData, separator).ToList();
+            var invalidChar = header.Find(x => x.Equals("\r\n"));
+
+            if (!string.IsNullOrEmpty(invalidChar))
+            {
+                header.Remove(invalidChar);
+            }
+            
             if (!headerMetaData.Contains(separator))
             {
                 return Array.Empty<string>();
@@ -49,14 +56,9 @@ namespace DecisionTree.Logic.Services
             return header;
         }
 
-        public IEnumerable<string> GetDataInformation(string file)
+        public IEnumerable<string> GetRowValues(string file)
         {
-            var separator = FormValidator.ValidValueSeparator;
-            if (!file.Contains(separator))
-            {
-                return Array.Empty<string>();
-            }
-
+            var separator = FormValidator.ValidValuesEntrySeparator;
             var data = SplitDataAtGivenCharacter(file, separator);
             return data;
         }
@@ -104,7 +106,8 @@ namespace DecisionTree.Logic.Services
                 {
                     // validate column length and row data length 
                     var currentDataRow = dataInformation[j];
-                    var data = SplitDataAtGivenCharacter(currentDataRow, FormValidator.ValidValueSeparator)[i];
+                    var splitData = SplitDataAtGivenCharacter(currentDataRow, FormValidator.ValidValueSeparator);
+                    var data = splitData[i];
                     currentColValues.Add(data);
                 }
 

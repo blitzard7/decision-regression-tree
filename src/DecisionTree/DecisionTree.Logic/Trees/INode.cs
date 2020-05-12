@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using DecisionTree.Logic.Models;
+using System.Collections.Generic;
 
 namespace DecisionTree.Logic.Trees
 {
@@ -6,7 +7,10 @@ namespace DecisionTree.Logic.Trees
     {
         INode Parent { get; set; }
         bool IsLeaf { get; }
-        string SearchString { get; set; }
+        string Feature { get; }
         Dictionary<string, INode> Children { get; set; }
+        void Start(CsvData data);
+        void Build(CsvData data);
+        bool ContainsHomogeneousData(CsvData data);
     }
 }

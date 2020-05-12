@@ -11,17 +11,17 @@ namespace DecisionTree.Logic.Services
             throw new NotImplementedException();
         }
 
-        public string[] Import(string file)
+        public string Import(string file)
         {
             if (!CheckFileExtentionToCsv(file))
             {
                 throw new InvalidFileExtensionException();
             }
-            var data = File.ReadAllLines(file);
+            var data = File.ReadAllText(file);
 
             if (data.Length <= 0)
             {
-                return Array.Empty<string>();
+                return string.Empty;
             }
 
             return data;
