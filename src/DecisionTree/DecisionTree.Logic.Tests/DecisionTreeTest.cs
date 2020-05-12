@@ -12,14 +12,14 @@ namespace DecisionTree.Logic.Tests
             // Arrange
             var rootNode = new Node();
             rootNode.Feature = "Swimming Suit";
-            var noneSwimmingSuidChild = new Node();
-            noneSwimmingSuidChild.Children = new Dictionary<string, INode>();
-            noneSwimmingSuidChild.CurrentClassification.Add("No", 2);
+            var noneSwimmingSuitChild = new Node();
+            noneSwimmingSuitChild.Children = new Dictionary<string, INode>();
+            noneSwimmingSuitChild.CurrentClassification.Add("No", 2);
 
             var smallSwimmingSuidChild = new Node();
             smallSwimmingSuidChild.Children = new Dictionary<string, INode>();
             smallSwimmingSuidChild.CurrentClassification.Add("No", 2);
-            rootNode.Children.Add("None", noneSwimmingSuidChild);
+            rootNode.Children.Add("None", noneSwimmingSuitChild);
             rootNode.Children.Add("Small", smallSwimmingSuidChild);
 
             var temperatureNode = new Node();
@@ -28,22 +28,30 @@ namespace DecisionTree.Logic.Tests
             temperatureNode.CurrentClassification.Add("No", 1);
             temperatureNode.CurrentClassification.Add("Yes", 1);
             var coldSubNode = new Node();
-            coldSubNode.Children = null;
             coldSubNode.CurrentClassification.Add("No", 1);
 
             var warmSubNode = new Node();
-            warmSubNode.Children = null;
             warmSubNode.CurrentClassification.Add("Yes", 1);
             temperatureNode.Children.Add("Cold", coldSubNode);
             temperatureNode.Children.Add("Warm", warmSubNode);
 
             var goodSwimmingSuidChild = new Node();
             goodSwimmingSuidChild.Children.Add("Good", temperatureNode);
-            rootNode.Children.Add("Good", goodSwimmingSuidChild);
+            rootNode.Children.Add("Good", temperatureNode);
+            rootNode.CurrentClassification.Add("No", 5);
+            rootNode.CurrentClassification.Add("Yes", 1);
+
+            var dt = new Trees.DecisionTree();
+            dt.Root = rootNode;
 
             // Act 
+            var list = new List<(string, string)>();
+            list.Add(("Swimming Suit", "Good"));
+            list.Add(("Water Temperature", "Warm"));
+            var node = dt.Query(list);
 
             // Assert
+            Assert.Contains("None", node.Children.Keys);
         }
     }
 }

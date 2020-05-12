@@ -1,11 +1,12 @@
 ﻿using DecisionTree.Logic.Models;
+using System.Collections.Generic;
 
 namespace DecisionTree.Logic.Trees
 {
     public interface ITree
     {
         INode Root { get; }
-        INode Query(string searchKeys);
+        INode Query(List<(string featureName, string featureValue)> searchKeys);
         ITree BuildTree(CsvData data);
     }
 }

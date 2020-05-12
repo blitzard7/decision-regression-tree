@@ -1,5 +1,6 @@
 ﻿using DecisionTree.Logic.Models;
 using System;
+using System.Collections.Generic;
 
 namespace DecisionTree.Logic.Trees
 {
@@ -13,6 +14,11 @@ namespace DecisionTree.Logic.Trees
         }
 
         public INode Query(string searchKeys)
+        {
+            throw new NotImplementedException();
+        }
+
+        public INode Query(List<(string featureName, string featureValue)> searchKeys)
         {
             throw new NotImplementedException();
         }

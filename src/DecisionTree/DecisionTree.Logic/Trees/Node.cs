@@ -36,6 +36,7 @@ namespace DecisionTree.Logic.Trees
             Build(data);
         }
 
+      
         public void Build(CsvData data)
         {
             var currentDistinctResultSet = data.ResultSetValues.Distinct();
