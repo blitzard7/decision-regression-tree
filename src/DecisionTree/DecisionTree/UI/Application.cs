@@ -60,19 +60,23 @@ namespace DecisionTree.UI
                     break;
                 case ConsoleKey.NumPad2:
                 case ConsoleKey.D2:
-                    // extact columnames of csvfile since those should represent the search categories (exluding ResultCategory which is the last element)
-                    QueryTree(_tree);
+                    // export data
                     break;
                 case ConsoleKey.NumPad3:
                 case ConsoleKey.D3:
-                    // display help
+                    // extact columnames of csvfile since those should represent the search categories (exluding ResultCategory which is the last element)
+                    QueryTree(_tree);
                     break;
                 case ConsoleKey.NumPad4:
                 case ConsoleKey.D4:
-                    // display menu
+                    // display help
                     break;
                 case ConsoleKey.NumPad5:
                 case ConsoleKey.D5:
+                    // display menu
+                    break;
+                case ConsoleKey.NumPad6:
+                case ConsoleKey.D6:
                     _isRunning = false;
                     break;
                 default:
@@ -86,6 +90,12 @@ namespace DecisionTree.UI
             ConsoleHelper.Write("Please enter path to csv file:");
             var input = Console.ReadLine();
             return input;
+        }
+
+        private void ExportData()
+        {
+            // user can add columns and rows including resultset 
+            // this should be then exported as csvfile (accordingly to provided format) and user can (if he/she wants to) import it later.
         }
 
         private ITree StartCalculatingTree()

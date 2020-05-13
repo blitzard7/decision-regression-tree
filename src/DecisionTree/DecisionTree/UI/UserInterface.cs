@@ -3,9 +3,10 @@
     public class UserInterface
     {
         public const string ImportData = "1. Import data";
-        public const string QueryTree = "2. Query Tree";
-        public const string Help = "3. Help";
-        public const string DisplayMenu = "4. Display menu";
-        public const string Quit = "5. Quit";
+        public const string ExportData = "2. Export data";
+        public const string QueryTree = "3. Query Tree";
+        public const string Help = "4. Help";
+        public const string DisplayMenu = "5. Display menu";
+        public const string Quit = "6. Quit";
     }
 }
