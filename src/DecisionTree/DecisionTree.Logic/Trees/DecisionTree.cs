@@ -48,7 +48,6 @@ namespace DecisionTree.Logic.Trees
             }
 
             var tmpRoot = Root;
-            var queryNode = new Node();
 
             // Assumption Rootnode is on index 0.
             var (featureName, featureValue) = searchKeys[0];
@@ -62,6 +61,9 @@ namespace DecisionTree.Logic.Trees
             
             if (foundNode.Children.Count != 0)
             {
+                // If the query elements contains all column names, but the decisiontree did not split at all features 
+                // we have to jump over some searchkeys if no split there is given
+                // e.g. (Overcast, sunny), (temperature, hot) -> temperature is no split category so we need to jump this!
                 for (int i = 1; i < searchKeys.Count; i++)
                 {
                     var currentSearch = searchKeys[i];
@@ -69,9 +71,6 @@ namespace DecisionTree.Logic.Trees
                 }
             }
 
-            // Search keys should be like:
-            // (string featureName, string value) e.g. (Outlook, sunny) 
-            // therefore we expect as input a List<(string,string)>
             return foundNode;
         }
 

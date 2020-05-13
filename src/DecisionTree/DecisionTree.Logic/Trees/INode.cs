@@ -8,6 +8,7 @@ namespace DecisionTree.Logic.Trees
         INode Parent { get; set; }
         bool IsLeaf { get; }
         string Feature { get; }
+        string FeatureValue { get; }
         double TotalEntropy { get; }
         double NodeEntropy { get; }
         double NodeInformationGain { get; }

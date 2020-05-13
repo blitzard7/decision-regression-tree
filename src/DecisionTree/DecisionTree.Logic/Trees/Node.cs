@@ -32,6 +32,8 @@ namespace DecisionTree.Logic.Trees
 
         public double TotalEntropy { get; private set; }
 
+        public string FeatureValue { get; private set; }
+
         public void Start(CsvData data)
         {
             TotalEntropy = data.EG;
@@ -58,6 +60,7 @@ namespace DecisionTree.Logic.Trees
                 var node = new Node
                 {
                     Parent = this,
+                    FeatureValue = distinctValue,
                     TotalEntropy = TotalEntropy,
                 };
 
