@@ -1,7 +1,5 @@
-﻿using DecisionTree.Logic.IoC;
-using DecisionTree.Logic.Services;
-using DecisionTree.Logic.Trees;
-using DecisionTree.Logic.Validator;
+﻿using DecisionTree.Logic.Interfaces;
+using DecisionTree.Logic.IoC;
 using DecisionTree.UI;
 using Microsoft.Extensions.DependencyInjection;
 using System;

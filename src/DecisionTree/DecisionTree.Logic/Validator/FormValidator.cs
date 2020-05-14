@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DecisionTree.Logic.Interfaces;
+using System;
 using System.Linq;
 
 namespace DecisionTree.Logic.Validator

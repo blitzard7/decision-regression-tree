@@ -1,4 +1,6 @@
-﻿using DecisionTree.Logic.Models;
+﻿using DecisionTree.Logic.Exceptions;
+using DecisionTree.Logic.Interfaces;
+using DecisionTree.Logic.Models;
 using DecisionTree.Logic.Validator;
 using System;
 using System.Collections.Generic;
@@ -19,7 +21,7 @@ namespace DecisionTree.Logic.Services
         {
             if (!_formValidator.IsMetaInformationFormatValid(file))
             {
-                throw new CsvInvalidException();
+                throw new CsvDataInvalidMetadataException();
             }
 
             var metaDataInformation = SplitMetaDataInformationFromRawFileContent(file).ToArray();

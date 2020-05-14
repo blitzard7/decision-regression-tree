@@ -1,7 +1,7 @@
 ﻿using DecisionTree.Logic.Models;
 using System.Collections.Generic;
 
-namespace DecisionTree.Logic.Services
+namespace DecisionTree.Logic.Interfaces
 {
     public interface ICsvService
     {

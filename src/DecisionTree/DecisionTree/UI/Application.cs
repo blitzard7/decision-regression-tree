@@ -1,8 +1,7 @@
 ﻿using DecisionTree.Helper;
+using DecisionTree.Logic.Exceptions;
+using DecisionTree.Logic.Interfaces;
 using DecisionTree.Logic.Models;
-using DecisionTree.Logic.Services;
-using DecisionTree.Logic.Trees;
-using DecisionTree.Logic.Validator;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,7 +15,6 @@ namespace DecisionTree.UI
         private readonly IFileService _fileService;
         private readonly IFormValidator _formValidator;
         private bool _isRunning;
-        private string _csvFilePath;
         private CsvData _csvData;
         private ITree _tree;
 
@@ -58,31 +56,28 @@ namespace DecisionTree.UI
 
         private void HandleUserInput(ConsoleKeyInfo userInput)
         {
+            string importFile = string.Empty;
             switch(userInput.Key)
             {
                 case ConsoleKey.NumPad1:
                 case ConsoleKey.D1:
-                    _csvFilePath = ImportDataCommand();
-                    _tree = StartCalculatingTree();
+                    ImportDataCommand();
                     break;
                 case ConsoleKey.NumPad2:
                 case ConsoleKey.D2:
-                    // export data
                     ExportData();
                     break;
                 case ConsoleKey.NumPad3:
                 case ConsoleKey.D3:
                     // extact columnames of csvfile since those should represent the search categories (exluding ResultCategory which is the last element)
-                    QueryTree(_tree);
+                    QueryTree(_tree, importFile);
                     break;
                 case ConsoleKey.NumPad4:
                 case ConsoleKey.D4:
-                    // display help
                     DisplayHelp();
                     break;
                 case ConsoleKey.NumPad5:
                 case ConsoleKey.D5:
-                    // display menu
                     DrawInterface();
                     break;
                 case ConsoleKey.NumPad6:
@@ -99,11 +94,48 @@ namespace DecisionTree.UI
             }
         }
 
-        private string ImportDataCommand()
+        private void ImportDataCommand()
         {
             ConsoleHelper.Write("Please enter path to csv file:");
             var input = Console.ReadLine();
-            return input;
+
+            if (string.IsNullOrEmpty(input) || string.IsNullOrWhiteSpace(input))
+            {
+                ConsoleHelper.WriteLine("No path has been entered. Make sure you enter a path.", ConsoleColor.Red);
+                return;
+            }
+
+            _tree = StartCalculatingTree(input);
+        }
+
+        private ITree StartCalculatingTree(string filePath)
+        {
+            var fileName = Path.GetFileName(filePath);
+            ConsoleHelper.WriteLine($"Starting tree building for file {fileName}", ConsoleColor.DarkGray);
+            try
+            {
+                var data = _fileService.Import(filePath);
+                _csvData = _csvService.CreateCsvDataFromFile(data);
+            }
+            catch (InvalidFileExtensionException)
+            {
+                ConsoleHelper.WriteLine($"File {fileName} has an invalid file extension. Make sure you upload a \".csv\" file.", ConsoleColor.Red);
+                return null;
+            } 
+            catch (CsvDataInvalidMetadataException)
+            {
+                ConsoleHelper.WriteLine($"File {fileName} does not match with expected format.", ConsoleColor.Red);
+            }
+            catch (Exception)
+            {
+                ConsoleHelper.WriteLine($"While parsing {fileName} an unexpected error has been encountered.", ConsoleColor.Red);
+            }
+
+            var dt = new Logic.Trees.DecisionTree();
+            var tree = dt.BuildTree(_csvData);
+            ConsoleHelper.WriteLine($"Finished tree building for file {fileName}", ConsoleColor.DarkGray);
+            VisualiseTree(tree);
+            return tree;
         }
 
         private void ExportData()
@@ -175,73 +207,9 @@ namespace DecisionTree.UI
             return columnsSeparatedCorrectly && rowsSeparatedCorretly && rowsFormatValid;
         }
 
-        private ITree StartCalculatingTree()
+        private INode QueryTree(ITree tree, string filePath)
         {
-            var fileName = Path.GetFileName(_csvFilePath);
-            ConsoleHelper.WriteLine($"Starting tree building for file {fileName}");
-            try
-            {
-                var data = _fileService.Import(_csvFilePath);
-                _csvData = _csvService.CreateCsvDataFromFile(data);
-
-            }
-            catch (InvalidFileExtensionException)
-            {
-                ConsoleHelper.WriteLine($"File {fileName} has an invalid file extension. Make sure you upload a \".csv\" file.", ConsoleColor.Red);
-                return null;
-            }
-
-            var dt = new Logic.Trees.DecisionTree();
-            var tree = dt.BuildTree(_csvData);
-            ConsoleHelper.WriteLine($"Finished tree building for file {fileName}");
-            VisualiseTree(tree);
-            return tree;
-        }
-
-        private void VisualiseTree(ITree tree)
-        {
-            if (tree == null || tree.Root == null)
-            {
-                ConsoleHelper.WriteLine("No tree present. Please make sure you upload data firt before printing the tree.", ConsoleColor.Red);
-                return;
-            }
-
-            PrintTree(tree.Root, "", true);
-        }
-
-        private static void PrintTree(INode tree, string indent, bool last)
-        {
-            // if it is a Feature Category (ColumnName) then represent it as UpperCase.
-            // features could be colorized 
-            // leaves could be colorized
-            string feature = null;
-            if (tree.Feature != null)
-            {
-                feature = tree.Feature.ToUpper();
-            }
-            var name = tree.FeatureValue != null ? $"{tree.FeatureValue} -> {feature}" : feature;
-
-            if (tree.IsLeaf)
-            {
-                name = $"{tree.FeatureValue} -> {tree.Result}";
-            }
-
-            Console.WriteLine(indent + "+- " + name);
-
-            // if children, if node
-            var a = tree.Parent != null && !tree.IsLeaf;
-            indent += a ? "|  " : "   ";
-
-            for (int i = 0; i < tree.Children.Count; i++)
-            {
-                var featureNode = tree.Children.ElementAt(i).Value;
-                PrintTree(featureNode, indent, featureNode.IsLeaf);
-            }
-        }
-
-        private INode QueryTree(ITree tree)
-        {
-            if (string.IsNullOrEmpty(_csvFilePath) || tree == null)
+            if (string.IsNullOrEmpty(filePath) || tree == null)
             {
                 ConsoleHelper.WriteLine("Please import first a csv file before querying the tree.", ConsoleColor.Red);
                 return null;
@@ -249,7 +217,7 @@ namespace DecisionTree.UI
 
             var headers = _csvData.Headers;
             INode foundNode = null;
-            
+
             // header.count - 1 since we do not want to query resultcatergory.
             var searchKeys = new List<(string featureName, string featureValue)>();
             for (int i = 0; i < headers.Count - 1; i++)
@@ -265,6 +233,48 @@ namespace DecisionTree.UI
             }
 
             return foundNode;
+        }
+
+        private void VisualiseTree(ITree tree)
+        {
+            if (tree == null || tree.Root == null)
+            {
+                ConsoleHelper.WriteLine("No tree present. Please make sure you upload data firt before printing the tree.", ConsoleColor.Red);
+                return;
+            }
+
+            PrintTree(tree.Root, "");
+        }
+
+        private static void PrintTree(INode tree, string indent)
+        {
+            // if it is a Feature Category (ColumnName) then represent it as UpperCase.
+            // features could be colorized 
+            // leaves could be colorized
+            string feature = null;
+            if (tree.Feature != null)
+            {
+                feature = tree.Feature.ToUpper();
+            }
+
+            var name = tree.FeatureValue != null ? $"{tree.FeatureValue} -> {feature}" : feature;
+
+            if (tree.IsLeaf)
+            {
+                name = $"{tree.FeatureValue} -> {tree.Result}";
+            }
+
+            Console.WriteLine(indent + "+- " + name);
+
+            // if children, if node
+            var indentCondition = tree.Parent != null && !tree.IsLeaf;
+            indent += indentCondition ? "|  " : "   ";
+
+            for (int i = 0; i < tree.Children.Count; i++)
+            {
+                var featureNode = tree.Children.ElementAt(i).Value;
+                PrintTree(featureNode, indent);
+            }
         }
 
         private void DisplayHelp()

@@ -1,5 +1,6 @@
-﻿using DecisionTree.Logic.Validator;
-using System;
+﻿using DecisionTree.Logic.Exceptions;
+using DecisionTree.Logic.Interfaces;
+using DecisionTree.Logic.Validator;
 using System.Collections.Generic;
 using System.IO;
 
@@ -36,9 +37,10 @@ namespace DecisionTree.Logic.Services
 
         private bool CheckFileExtentionToCsv(string file)
         {
+            var validFormat = ".csv";
             var extension = Path.GetExtension(file);
 
-            if (string.IsNullOrEmpty(extension) || !extension.Equals(".csv")) 
+            if (string.IsNullOrEmpty(extension) || !extension.Equals(validFormat)) 
             {
                 return false;
             }

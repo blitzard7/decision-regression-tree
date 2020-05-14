@@ -1,4 +1,5 @@
-﻿using DecisionTree.Logic.Trees;
+﻿using DecisionTree.Logic.Interfaces;
+using DecisionTree.Logic.Trees;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
