@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace DecisionTree.Logic.Services
 {
     [Serializable]
-    internal class InvalidFileExtensionException : Exception
+    public class InvalidFileExtensionException : Exception
     {
         public InvalidFileExtensionException()
         {

@@ -51,6 +51,8 @@ namespace DecisionTree.Logic.Models
             //  rows should not contain distinctValue
 
             var headers = TakeColumnsExcludingCurrentFeature(featureName);
+
+            // TODO: fix, if multiple columns (different) have the same value -> relevantRows would return incorrect data!
             var relevantRows = this.Rows.Where(x => x.Contains(distinctValue)).ToList();
             newRows.AddRange(from item in relevantRows
                              let current = item.Replace($"{distinctValue};", string.Empty)
@@ -85,6 +87,11 @@ namespace DecisionTree.Logic.Models
 
             tmpHeaders.Remove(feature);
             return tmpHeaders;
+        }
+
+        private List<string> TakeRelevantRowsFromCurrentFeature(string feature)
+        {
+            return null;
         }
 
         private List<string> GetColumnValues(List<string> rows, int headerIndex)

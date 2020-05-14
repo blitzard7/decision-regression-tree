@@ -17,5 +17,11 @@ namespace DecisionTree.Helper
             Console.Write(input);
             Console.ResetColor();
         }
+
+        public static void WriteTreeEntry(string feature, string featureValue)
+        {
+            Write($"{featureValue} -> ");
+            Write(feature, ConsoleColor.Cyan);
+        }
     }
 }

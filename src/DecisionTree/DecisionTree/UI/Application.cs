@@ -52,6 +52,7 @@ namespace DecisionTree.UI
             ConsoleHelper.WriteLine(UserInterface.QueryTree, ConsoleColor.Yellow);
             ConsoleHelper.WriteLine(UserInterface.Help, ConsoleColor.Yellow);
             ConsoleHelper.WriteLine(UserInterface.DisplayMenu, ConsoleColor.Yellow);
+            ConsoleHelper.WriteLine(UserInterface.PrintTree, ConsoleColor.Yellow);
             ConsoleHelper.WriteLine(UserInterface.Quit, ConsoleColor.Yellow);
         }
 
@@ -77,13 +78,19 @@ namespace DecisionTree.UI
                 case ConsoleKey.NumPad4:
                 case ConsoleKey.D4:
                     // display help
+                    DisplayHelp();
                     break;
                 case ConsoleKey.NumPad5:
                 case ConsoleKey.D5:
                     // display menu
+                    DrawInterface();
                     break;
                 case ConsoleKey.NumPad6:
                 case ConsoleKey.D6:
+                    VisualiseTree(_tree);
+                    break;
+                case ConsoleKey.NumPad7:
+                case ConsoleKey.D7:
                     _isRunning = false;
                     break;
                 default:
@@ -172,21 +179,37 @@ namespace DecisionTree.UI
         {
             var fileName = Path.GetFileName(_csvFilePath);
             ConsoleHelper.WriteLine($"Starting tree building for file {fileName}");
-            var data = _fileService.Import(_csvFilePath);
-            _csvData = _csvService.CreateCsvDataFromFile(data);
+            try
+            {
+                var data = _fileService.Import(_csvFilePath);
+                _csvData = _csvService.CreateCsvDataFromFile(data);
+
+            }
+            catch (InvalidFileExtensionException)
+            {
+                ConsoleHelper.WriteLine($"File {fileName} has an invalid file extension. Make sure you upload a \".csv\" file.", ConsoleColor.Red);
+                return null;
+            }
+
             var dt = new Logic.Trees.DecisionTree();
             var tree = dt.BuildTree(_csvData);
             ConsoleHelper.WriteLine($"Finished tree building for file {fileName}");
-            VisualiseTree(tree.Root);
+            VisualiseTree(tree);
             return tree;
         }
 
-        private void VisualiseTree(INode node)
+        private void VisualiseTree(ITree tree)
         {
-            PrintTree(node, "", true);
+            if (tree == null || tree.Root == null)
+            {
+                ConsoleHelper.WriteLine("No tree present. Please make sure you upload data firt before printing the tree.", ConsoleColor.Red);
+                return;
+            }
+
+            PrintTree(tree.Root, "", true);
         }
 
-        public static void PrintTree(INode tree, string indent, bool last)
+        private static void PrintTree(INode tree, string indent, bool last)
         {
             // if it is a Feature Category (ColumnName) then represent it as UpperCase.
             // features could be colorized 
@@ -202,7 +225,7 @@ namespace DecisionTree.UI
             {
                 name = $"{tree.FeatureValue} -> {tree.Result}";
             }
-          
+
             Console.WriteLine(indent + "+- " + name);
 
             // if children, if node
@@ -218,13 +241,15 @@ namespace DecisionTree.UI
 
         private INode QueryTree(ITree tree)
         {
-            var headers = _csvData.Headers;
-            INode foundNode = null;
-            if (string.IsNullOrEmpty(_csvFilePath))
+            if (string.IsNullOrEmpty(_csvFilePath) || tree == null)
             {
-                ConsoleHelper.WriteLine("Please import first a csv file before querying the tree.");
+                ConsoleHelper.WriteLine("Please import first a csv file before querying the tree.", ConsoleColor.Red);
+                return null;
             }
 
+            var headers = _csvData.Headers;
+            INode foundNode = null;
+            
             // header.count - 1 since we do not want to query resultcatergory.
             var searchKeys = new List<(string featureName, string featureValue)>();
             for (int i = 0; i < headers.Count - 1; i++)
@@ -240,6 +265,38 @@ namespace DecisionTree.UI
             }
 
             return foundNode;
+        }
+
+        private void DisplayHelp()
+        {
+            ConsoleHelper.WriteLine("Csv Schema", ConsoleColor.Cyan);
+            ConsoleHelper.WriteLine("==========", ConsoleColor.Cyan);
+            ConsoleHelper.WriteLine("Columns and Rows are separated by a \"Data\" tag.");
+            ConsoleHelper.WriteLine("Without that \"Data\" tag the import will fail.\r\n");
+            ConsoleHelper.Write("Columns: are separated by \";\"");
+            ConsoleHelper.Write("Rows: are separated by \";\"");
+            ConsoleHelper.WriteLine("Example:");
+            ConsoleHelper.WriteLine("Col1;Col2;Col3;\r\nData\r\nrow1;row2;row3;\r\n");
+            ConsoleHelper.WriteLine("Export Data", ConsoleColor.Cyan);
+            ConsoleHelper.WriteLine("===========", ConsoleColor.Cyan);
+            ConsoleHelper.WriteLine("You can enter your column and row values into the console.");
+            ConsoleHelper.WriteLine("Make sure your column and row values are separated with \";\".");
+            ConsoleHelper.WriteLine("When exporting data, there is no need to separate columns and rows with the \"Data\" tag.");
+            ConsoleHelper.WriteLine("The \"Data\" tag will automatically be inserted when exporting to csv.\r\n");
+            ConsoleHelper.WriteLine("Tree Visualization", ConsoleColor.Cyan);
+            ConsoleHelper.WriteLine("==================", ConsoleColor.Cyan);
+            ConsoleHelper.WriteLine("Tree Nodes: are represented in uppercase.");
+            ConsoleHelper.WriteLine("Tree Edges: are represented in lowercase.");
+            ConsoleHelper.WriteLine("Leaves: are represented in lowercase.");
+            ConsoleHelper.WriteLine("The parent node wraps all child elements inside the \"|\"");
+            ConsoleHelper.WriteLine("Node children are represented indented of the parent node.");
+            ConsoleHelper.WriteLine("Example:");
+            ConsoleHelper.WriteLine(@"+- SWIMMING SUIT
+   +- None -> No
+   +- Small -> No
+   +- Good -> WATER TEMPERATURE
+   |  +- Cold -> No
+   |  +- Warm -> Yes");
         }
     }
 }
