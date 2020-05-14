@@ -197,5 +197,36 @@ namespace DecisionTree.Logic.Tests
             // Assert
             Assert.True(amountSame);
         }
+
+        [Theory]
+        [InlineData("data,data,data,data")]
+        [InlineData("")]
+        [InlineData("I'm not valid")]
+        public void IsDataSeparatedCorrectly_ShouldReturnFalseWhenDataIsNotSplitCorrectly(string data)
+        {
+            // Arrange 
+            var formValidator = new FormValidator();
+
+            // Act 
+            var isDataSeparatedCorrectly = formValidator.IsDataSeparatedCorrectly(data);
+
+            // Assert
+            Assert.False(isDataSeparatedCorrectly);
+        }
+
+        [Theory]
+        [InlineData("data;data;data;data")]
+        [InlineData("I'm valid;because;I'm split, correctly")]
+        public void IsDataSeparatedCorrectly_ShouldReturnTrueWhenDataIsSplitCorrectly(string data)
+        {
+            // Arrange 
+            var formValidator = new FormValidator();
+
+            // Act 
+            var isDataSeparatedCorrectly = formValidator.IsDataSeparatedCorrectly(data);
+
+            // Assert
+            Assert.True(isDataSeparatedCorrectly);
+        }
     }
 }

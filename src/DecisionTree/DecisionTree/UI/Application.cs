@@ -2,7 +2,7 @@
 using DecisionTree.Logic.Models;
 using DecisionTree.Logic.Services;
 using DecisionTree.Logic.Trees;
-using Microsoft.Extensions.DependencyInjection;
+using DecisionTree.Logic.Validator;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,15 +12,19 @@ namespace DecisionTree.UI
 {
     public class Application : IApplication
     {
-        private readonly IServiceProvider _container;
+        private readonly ICsvService _csvService;
+        private readonly IFileService _fileService;
+        private readonly IFormValidator _formValidator;
         private bool _isRunning;
         private string _csvFilePath;
         private CsvData _csvData;
         private ITree _tree;
 
-        public Application(IServiceProvider container)
+        public Application(IFileService fileService, ICsvService csvService, IFormValidator formValidator)
         {
-            _container = container;
+            _fileService = fileService;
+            _csvService = csvService;
+            _formValidator = formValidator;
         }
 
         public void Exit()
@@ -44,8 +48,10 @@ namespace DecisionTree.UI
         private void DrawInterface()
         {
             ConsoleHelper.WriteLine(UserInterface.ImportData, ConsoleColor.Yellow);
+            ConsoleHelper.WriteLine(UserInterface.ExportData, ConsoleColor.Yellow);
             ConsoleHelper.WriteLine(UserInterface.QueryTree, ConsoleColor.Yellow);
             ConsoleHelper.WriteLine(UserInterface.Help, ConsoleColor.Yellow);
+            ConsoleHelper.WriteLine(UserInterface.DisplayMenu, ConsoleColor.Yellow);
             ConsoleHelper.WriteLine(UserInterface.Quit, ConsoleColor.Yellow);
         }
 
@@ -61,6 +67,7 @@ namespace DecisionTree.UI
                 case ConsoleKey.NumPad2:
                 case ConsoleKey.D2:
                     // export data
+                    ExportData();
                     break;
                 case ConsoleKey.NumPad3:
                 case ConsoleKey.D3:
@@ -96,16 +103,77 @@ namespace DecisionTree.UI
         {
             // user can add columns and rows including resultset 
             // this should be then exported as csvfile (accordingly to provided format) and user can (if he/she wants to) import it later.
+            var columns = GetColumnInformationForExport();
+            var rows = GetRowInformationForExport();
+
+            // Todo check input
+            var isGivenDataValid = CheckExportDataForValidity(columns, rows);
+
+            if (!isGivenDataValid)
+            {
+                ConsoleHelper.WriteLine("Your entered data does not match the expected format.\r\nPlease make sure your rows value matches the columns and your columns and rows are \";\" separated.\r\nDo you want to quit? (Y/N)");
+                var quit = Console.ReadKey(true);
+
+                if (quit.Key == ConsoleKey.Y)
+                {
+                    return;
+                }
+                else if (quit.Key == ConsoleKey.N)
+                {
+                    ExportData();
+                }
+            }
+
+            ConsoleHelper.Write("Enter path where to export your data: ");
+            var path = Console.ReadLine();
+
+            try
+            {
+                _fileService.Export(columns, rows, path);
+            }
+            catch (Exception)
+            {
+                ConsoleHelper.WriteLine($"An error has been encountered while exporting to {path}.");
+            }
+        }
+
+        private string GetColumnInformationForExport()
+        {
+            ConsoleHelper.Write("Please enter your column name semi-colon \";\" separated: ");
+            var input = Console.ReadLine();
+
+            return input;
+        }
+
+        private List<string> GetRowInformationForExport()
+        {
+            var rows = new List<string>();
+            ConsoleHelper.WriteLine("Please enter your row values semi-colon \";\" separated (press \"Enter\" to quit): ");
+
+            string input;
+            while (!string.IsNullOrEmpty(input = Console.ReadLine()))
+            {
+                rows.Add(input);
+            }
+
+            return rows;
+        }
+
+        private bool CheckExportDataForValidity(string columns, List<string> rows)
+        {
+            var columnsSeparatedCorrectly = _formValidator.IsDataSeparatedCorrectly(columns);
+            var rowsSeparatedCorretly = rows.All(x => _formValidator.IsDataSeparatedCorrectly(x));
+            var rowsFormatValid = _formValidator.IsRowFormatValid(rows.ToArray());
+
+            return columnsSeparatedCorrectly && rowsSeparatedCorretly && rowsFormatValid;
         }
 
         private ITree StartCalculatingTree()
         {
             var fileName = Path.GetFileName(_csvFilePath);
             ConsoleHelper.WriteLine($"Starting tree building for file {fileName}");
-            var fileService = _container.GetService<IFileService>();
-            var data = fileService.Import(_csvFilePath);
-            var csvService = _container.GetService<ICsvService>();
-            _csvData = csvService.CreateCsvDataFromFile(data);
+            var data = _fileService.Import(_csvFilePath);
+            _csvData = _csvService.CreateCsvDataFromFile(data);
             var dt = new Logic.Trees.DecisionTree();
             var tree = dt.BuildTree(_csvData);
             ConsoleHelper.WriteLine($"Finished tree building for file {fileName}");

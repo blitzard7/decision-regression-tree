@@ -1,6 +1,7 @@
 ﻿using DecisionTree.Logic.IoC;
 using DecisionTree.Logic.Services;
 using DecisionTree.Logic.Trees;
+using DecisionTree.Logic.Validator;
 using DecisionTree.UI;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -15,7 +16,10 @@ namespace DecisionTree
         {
             var services = new ServiceCollection();
             container = IoCHelper.RegisterDependencies(services);
-            var application = new Application(container);
+            var fileService = container.GetService<IFileService>();
+            var csvService = container.GetService<ICsvService>();
+            var formValidator = container.GetService<IFormValidator>();
+            var application = new Application(fileService, csvService, formValidator);
             application.Start();
             //Console.WriteLine("Enter path to csv file to construct a Decision Tree:");
             //var file = Console.ReadLine();
