@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DecisionTree.Logic.Trees
 {
-    public interface IDecisionTreeNode : INode
+    public interface IDecisionTreeNode
     {
         double TotalEntropy { get; }
         double NodeEntropy { get; }

@@ -1,14 +1,21 @@
-﻿using System;
+﻿using DecisionTree.Logic.Validator;
+using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace DecisionTree.Logic.Services
 {
     public class FileService : IFileService
     {
-        public void Export(string data)
+        public void Export(string columns, IEnumerable<string> rows, string path)
         {
-            // Export decision tree data?
-            throw new NotImplementedException();
+            var lines = new List<string>
+            {
+                columns,
+                FormValidator.ValidDataSeparator
+            };
+            lines.AddRange(rows);
+            File.AppendAllLines(path, lines);
         }
 
         public string Import(string file)

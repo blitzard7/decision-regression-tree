@@ -81,7 +81,18 @@ namespace DecisionTree.Logic.Models
 
         private List<string> GetColumnValues(List<string> rows, int headerIndex)
         {
-            return rows.Select(x => x.Split(FormValidator.ValidValueSeparator, StringSplitOptions.RemoveEmptyEntries)[headerIndex]).ToList();
+            // when we are looking at the resultcategory index we are getting IndexOutOfRange
+            // if we split into subsets, since our data is getting smaller.
+            
+            // hack
+            var index = this.Headers[headerIndex] == this.ResultCategory ? headerIndex - 1 : headerIndex;
+            return rows.Select(x =>
+            {
+
+                var split = x.Split(FormValidator.ValidValueSeparator, StringSplitOptions.RemoveEmptyEntries);
+                var selected = split[index];
+                return selected;
+            }).ToList();
         }
     }
 }

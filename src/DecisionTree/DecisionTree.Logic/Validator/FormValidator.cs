@@ -43,6 +43,23 @@ namespace DecisionTree.Logic.Validator
             return IsRowFormatValid(rows);
         }
 
+        public bool IsDataSeparatedCorrectly(string data)
+        {
+            var splitData = data.Split(ValidValueSeparator, StringSplitOptions.RemoveEmptyEntries);
+
+            if (splitData.Length == 0)
+            {
+                return false;
+            }
+
+            if (splitData.Contains(data) && splitData.Length == 1)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public bool IsHeaderPresent(string input)
         {
             var tmpInput = input.Replace(ValidValuesEntrySeparator, string.Empty);
@@ -79,15 +96,7 @@ namespace DecisionTree.Logic.Validator
 
             return rows.All(x =>
             {
-                var data = x.Split(ValidValueSeparator, StringSplitOptions.RemoveEmptyEntries);
-
-                // what happens when there is only 1 column and 1 row?
-                if (data.Length <= 0 || data[0].Equals(x))
-                {
-                    return false;
-                }
-
-                return true;
+                return IsRowFormatValid(x);
             });
         }
 

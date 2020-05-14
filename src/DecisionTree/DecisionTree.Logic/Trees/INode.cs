@@ -8,6 +8,12 @@ namespace DecisionTree.Logic.Trees
         INode Parent { get; set; }
         bool IsLeaf { get; }
         string Feature { get; }
+        string FeatureValue { get; }
+        double TotalEntropy { get; }
+        double NodeEntropy { get; }
+        double NodeInformationGain { get; }
+        string Result { get; }
+        Dictionary<string, int> CurrentClassification { get; }
         Dictionary<string, INode> Children { get; set; }
         void Start(CsvData data);
         void Build(CsvData data);
