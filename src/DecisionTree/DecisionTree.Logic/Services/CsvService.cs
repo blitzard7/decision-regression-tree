@@ -41,19 +41,20 @@ namespace DecisionTree.Logic.Services
         {
             var separator = FormValidator.ValidValueSeparator;
             var header = SplitDataAtGivenCharacter(headerMetaData, separator).ToList();
-            var invalidChar = header.Find(x => x.Equals("\r\n"));
 
-            if (!string.IsNullOrEmpty(invalidChar))
+            if (header.Contains("\r\n"))
             {
-                header.Remove(invalidChar);
+                header.Remove(FormValidator.ValidValuesEntrySeparator);
             }
+            
+            var columns = header.Select(x => x.Trim('\r', '\n'));
             
             if (!headerMetaData.Contains(separator))
             {
                 return Array.Empty<string>();
             }
 
-            return header;
+            return columns;
         }
 
         public IEnumerable<string> GetRowValues(string file)

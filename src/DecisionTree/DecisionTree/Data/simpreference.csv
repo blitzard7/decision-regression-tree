@@ -1,8 +1,8 @@
-Swimming Suit;Water Temperature;Swim Preference;
+Swimming Suit;Water Temperature;Swim Preference
 Data
-None;Cold;No;
-None;Warm;No;
-Small;Cold;No;
-Small;Warm;No;
-Good;Cold;No; 
+None;Cold;No
+None;Warm;No
+Small;Cold;No
+Small;Warm;No
+Good;Cold;No
 Good;Warm;Yes
