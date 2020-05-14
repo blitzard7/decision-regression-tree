@@ -1,4 +1,5 @@
-﻿using DecisionTree.Logic.Models;
+﻿using DecisionTree.Logic.Interfaces;
+using DecisionTree.Logic.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +30,6 @@ namespace DecisionTree.Logic.Trees
             // For E(G) we have to extract all result values 
             Root = new Node();
             Root.Start(data);
-            
             return this;
         }
 

@@ -1,9 +1,6 @@
-﻿using DecisionTree.Logic.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace DecisionTree.Logic.Trees
+namespace DecisionTree.Logic.Interfaces
 {
     public interface IDecisionTreeNode
     {

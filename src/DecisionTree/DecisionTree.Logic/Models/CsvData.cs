@@ -42,7 +42,6 @@ namespace DecisionTree.Logic.Models
         public CsvData Filter(string featureName, string distinctValue)
         {
             // collect row data for given distinctValue.
-            var headers = new List<string>();
             var newRows = new List<string>();
             var columns = new Dictionary<string, List<string>>();
 
@@ -50,8 +49,10 @@ namespace DecisionTree.Logic.Models
             // 2. collect all rows containing distinctValue
             // 3. create subset containing relevant headers with corresponing rows 
             //  rows should not contain distinctValue
-            
-            headers.AddRange(this.Headers.SkipWhile(x => x == featureName));
+
+            var headers = TakeColumnsExcludingCurrentFeature(featureName);
+
+            // TODO: fix, if multiple columns (different) have the same value -> relevantRows would return incorrect data!
             var relevantRows = this.Rows.Where(x => x.Contains(distinctValue)).ToList();
             newRows.AddRange(from item in relevantRows
                              let current = item.Replace($"{distinctValue};", string.Empty)
@@ -77,6 +78,20 @@ namespace DecisionTree.Logic.Models
         private List<string> GetResultSetValues()
         {
             return this.Columns[ResultCategory];
+        }
+
+        private List<string> TakeColumnsExcludingCurrentFeature(string feature)
+        {
+            var tmpHeaders = new List<string>();
+            tmpHeaders.AddRange(this.Headers);
+
+            tmpHeaders.Remove(feature);
+            return tmpHeaders;
+        }
+
+        private List<string> TakeRelevantRowsFromCurrentFeature(string feature)
+        {
+            return null;
         }
 
         private List<string> GetColumnValues(List<string> rows, int headerIndex)

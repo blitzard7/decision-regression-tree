@@ -1,7 +1,7 @@
 ﻿using DecisionTree.Logic.Models;
 using System.Collections.Generic;
 
-namespace DecisionTree.Logic.Trees
+namespace DecisionTree.Logic.Interfaces
 {
     public interface INode
     {

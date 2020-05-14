@@ -1,4 +1,5 @@
-﻿using DecisionTree.Logic.Services;
+﻿using DecisionTree.Logic.Interfaces;
+using DecisionTree.Logic.Services;
 using DecisionTree.Logic.Validator;
 using Microsoft.Extensions.DependencyInjection;
 

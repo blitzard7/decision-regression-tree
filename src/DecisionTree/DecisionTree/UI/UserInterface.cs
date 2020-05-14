@@ -7,6 +7,7 @@
         public const string QueryTree = "3. Query Tree";
         public const string Help = "4. Help";
         public const string DisplayMenu = "5. Display menu";
-        public const string Quit = "6. Quit";
+        public const string PrintTree = "6. Print tree";
+        public const string Quit = "7. Quit";
     }
 }

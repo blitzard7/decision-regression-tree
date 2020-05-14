@@ -1,4 +1,4 @@
-﻿namespace DecisionTree.Logic.Validator
+﻿namespace DecisionTree.Logic.Interfaces
 {
     public interface IFormValidator
     {
