@@ -64,7 +64,6 @@ namespace DecisionTree.UI
                 case ConsoleKey.D1:
                     ImportDataCommand();
                     StartCalculatingTree();
-                    ConsoleHelper.WriteLine($"Finished building tree...", ConsoleColor.DarkGray);
                     break;
                 case ConsoleKey.NumPad2:
                 case ConsoleKey.D2:
@@ -150,6 +149,7 @@ namespace DecisionTree.UI
             }
 
             VisualiseTree(_tree);
+            ConsoleHelper.WriteLine($"Finished building tree...", ConsoleColor.DarkGray);
         }
 
         private void ExportData()
