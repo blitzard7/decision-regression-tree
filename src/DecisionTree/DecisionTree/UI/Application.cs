@@ -14,6 +14,7 @@ namespace DecisionTree.UI
         private readonly ICsvService _csvService;
         private readonly IFileService _fileService;
         private readonly IFormValidator _formValidator;
+        private string _fileName;
         private bool _isRunning;
         private CsvData _csvData;
         private ITree _tree;
@@ -62,6 +63,8 @@ namespace DecisionTree.UI
                 case ConsoleKey.NumPad1:
                 case ConsoleKey.D1:
                     ImportDataCommand();
+                    StartCalculatingTree();
+                    ConsoleHelper.WriteLine($"Finished building tree...", ConsoleColor.DarkGray);
                     break;
                 case ConsoleKey.NumPad2:
                 case ConsoleKey.D2:
@@ -105,37 +108,48 @@ namespace DecisionTree.UI
                 return;
             }
 
-            _tree = StartCalculatingTree(input);
-        }
+            _fileName = Path.GetFileName(input);
 
-        private ITree StartCalculatingTree(string filePath)
-        {
-            var fileName = Path.GetFileName(filePath);
-            ConsoleHelper.WriteLine($"Starting tree building for file {fileName}", ConsoleColor.DarkGray);
             try
             {
-                var data = _fileService.Import(filePath);
+                var data = _fileService.Import(input);
                 _csvData = _csvService.CreateCsvDataFromFile(data);
             }
             catch (InvalidFileExtensionException)
             {
-                ConsoleHelper.WriteLine($"File {fileName} has an invalid file extension. Make sure you upload a \".csv\" file.", ConsoleColor.Red);
-                return null;
-            } 
+                ConsoleHelper.WriteLine($"File {_fileName} has an invalid file extension. Make sure you upload a \".csv\" file.", ConsoleColor.Red);
+            }
             catch (CsvDataInvalidMetadataException)
             {
-                ConsoleHelper.WriteLine($"File {fileName} does not match with expected format.", ConsoleColor.Red);
+                ConsoleHelper.WriteLine($"File {_fileName} does not match with expected format.", ConsoleColor.Red);
             }
             catch (Exception)
             {
-                ConsoleHelper.WriteLine($"While parsing {fileName} an unexpected error has been encountered.", ConsoleColor.Red);
+                ConsoleHelper.WriteLine($"While parsing {_fileName} an unexpected error has been encountered.", ConsoleColor.Red);
+            }
+        }
+
+        private void StartCalculatingTree()
+        {
+            if (_csvData == null)
+            {
+                ConsoleHelper.WriteLine($"Parsed data for imported file  {_fileName} is empty.", ConsoleColor.Red);
             }
 
+            ConsoleHelper.WriteLine($"Starting building tree...", ConsoleColor.DarkGray);
             var dt = new Logic.Trees.DecisionTree();
-            var tree = dt.BuildTree(_csvData);
-            ConsoleHelper.WriteLine($"Finished tree building for file {fileName}", ConsoleColor.DarkGray);
-            VisualiseTree(tree);
-            return tree;
+
+            try
+            {
+                _tree = dt.BuildTree(_csvData);
+            }
+            catch (Exception)
+            {
+                ConsoleHelper.WriteLine("While building the decision tree an error has been encountered.", ConsoleColor.Red);
+                return;
+            }
+
+            VisualiseTree(_tree);
         }
 
         private void ExportData()

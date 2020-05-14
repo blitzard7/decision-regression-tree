@@ -1,5 +1,4 @@
-﻿using DecisionTree.Logic.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,36 +17,6 @@ namespace DecisionTree.Logic.Helper
         }
 
         public static double CalculateInformationGain(double totalEntropy, double featureEntropy) => totalEntropy - featureEntropy;
-
-
-        public static IEnumerable<(string, double)> CalculateInformationGainOfFeatures(CsvData data)
-        {
-            var informationGainOfFeatures = new List<(string, double)>();
-
-            // Next step is to calculate Entropy for each column and possibility 
-            // data.Headers.Count - 1, since we do not want to iterate over the resultcaterogy.
-            for (int i = 0; i < data.Headers.Count - 1; i++)
-            {
-                // DataSet contains for given column name, all rows depending on column distinct values.
-                // This will be relevant for calculating Entropy for each column entry of row.
-                var dataSetOfCurrentColumn = new Dictionary<string, List<string>>();
-                var currentColumn = data.Headers[i];
-                var distinctColumValues = data.GetUniqueColumnValues(currentColumn);
-
-                foreach (var val in distinctColumValues)
-                {
-                    var specificRows = data.GetSpecificRowEntries(val).ToList();
-                    dataSetOfCurrentColumn.Add(val, specificRows);
-                }
-
-                var eCurrent = CalculateEntropyOfFeature(dataSetOfCurrentColumn, data.ResultSetValues);
-                var igCurrent = CalculateInformationGain(data.EG, eCurrent);
-
-                informationGainOfFeatures.Add((currentColumn, igCurrent));
-            }
-
-            return informationGainOfFeatures;
-        }
 
         public static double CalculateEntropyOfFeature(Dictionary<string, List<string>> dataSetOfCurrentColumn, List<string> resultSetValues)
         {

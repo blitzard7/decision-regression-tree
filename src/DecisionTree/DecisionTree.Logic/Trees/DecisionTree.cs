@@ -30,7 +30,6 @@ namespace DecisionTree.Logic.Trees
             // For E(G) we have to extract all result values 
             Root = new Node();
             Root.Start(data);
-            
             return this;
         }
 

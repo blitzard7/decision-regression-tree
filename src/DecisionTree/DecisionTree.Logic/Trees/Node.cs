@@ -40,7 +40,6 @@ namespace DecisionTree.Logic.Trees
             TotalEntropy = data.EG;
             Build(data);
         }
-
       
         public void Build(CsvData data)
         {
