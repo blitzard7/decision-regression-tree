@@ -1,5 +1,5 @@
-﻿using DecisionTree.Logic.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using DecisionTree.Logic.Models;
 
 namespace DecisionTree.Logic.Interfaces
 {

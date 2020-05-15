@@ -20,7 +20,7 @@ namespace DecisionTree.Logic.Helper
             const int logBase = 2;
             var totalAmount = resultSetValues.Count;
             var occurrences = distinctResultValues.CalculateOccurenceOfGivenEntries(resultSetValues);
-            var entropy = occurrences.Sum(x => -((double)x.Value / totalAmount) * Math.Log(((double)x.Value / totalAmount), logBase));
+            var entropy = occurrences.Sum(x => -((double)x.Value / totalAmount) * Math.Log((double)x.Value / totalAmount, logBase));
 
             return entropy;
         }

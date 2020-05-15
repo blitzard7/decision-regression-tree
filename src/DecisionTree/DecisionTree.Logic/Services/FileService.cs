@@ -1,8 +1,8 @@
-﻿using DecisionTree.Logic.Exceptions;
+﻿using System.Collections.Generic;
+using System.IO;
+using DecisionTree.Logic.Exceptions;
 using DecisionTree.Logic.Interfaces;
 using DecisionTree.Logic.Validator;
-using System.Collections.Generic;
-using System.IO;
 
 namespace DecisionTree.Logic.Services
 {
@@ -19,6 +19,7 @@ namespace DecisionTree.Logic.Services
             {
                 throw new InvalidFileExtensionException();
             }
+
             var data = File.ReadAllText(file);
 
             return data.Length <= 0 ? string.Empty : data;
@@ -37,6 +38,7 @@ namespace DecisionTree.Logic.Services
                 columns,
                 FormValidator.ValidDataSeparator
             };
+
             lines.AddRange(rows);
             File.AppendAllLines(path, lines);
         }

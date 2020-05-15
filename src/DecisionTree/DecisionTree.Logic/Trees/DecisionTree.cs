@@ -1,8 +1,7 @@
-﻿using DecisionTree.Logic.Interfaces;
-using DecisionTree.Logic.Models;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using DecisionTree.Logic.Interfaces;
+using DecisionTree.Logic.Models;
 
 namespace DecisionTree.Logic.Trees
 {
@@ -26,6 +25,12 @@ namespace DecisionTree.Logic.Trees
         // Entropy and InformationGain is calculated 
         // Stop groving after all leafe nodes are homogeneouse (Post-pruning)
         // Returns DecisionTree
+
+        /// <summary>
+        /// Builds the tree according to the <see cref="CsvData"/> recursively.
+        /// </summary>
+        /// <param name="data">The csv data.</param>
+        /// <returns>Returns the constructed tree.</returns>
         public ITree BuildTree(CsvData data)
         {
             // 1. determine root node (column) of tree
@@ -39,11 +44,11 @@ namespace DecisionTree.Logic.Trees
             return this;
         }
 
-        public void PostPruning()
-        {
-            throw new NotImplementedException();
-        }
-
+        /// <summary>
+        /// Queries the constructed tree with the given search keys.
+        /// </summary>
+        /// <param name="searchKeys">The search keys.</param>
+        /// <returns>Returns the resulted node.</returns>
         public INode Query(List<(string featureName, string featureValue)> searchKeys)
         {
             // List of searchkey should contain rootfeature name as first element.
@@ -80,6 +85,11 @@ namespace DecisionTree.Logic.Trees
             return foundNode;
         }
 
+        /// <summary>
+        /// Queries the node according to the search key.
+        /// </summary>
+        /// <param name="searchKey">The search key.</param>
+        /// <returns>Returns the found node.</returns>
         private INode QueryNode((string featureName, string featureValue) searchKey)
         {
             var tmpNode = Root;
@@ -95,6 +105,12 @@ namespace DecisionTree.Logic.Trees
             return foundNode;
         }
 
+        /// <summary>
+        /// Gets the sub set of the requested node according to the search key.
+        /// </summary>
+        /// <param name="node">The node.</param>
+        /// <param name="searchKey">The search key.</param>
+        /// <param name="rootKey">The root.</param>
         private void GetSubsetOfNode(INode node, (string featureName, string featureValue) searchKey, string rootKey)
         {
             var subset = node.Children.Where(s => s.Value.Children.ContainsKey(searchKey.featureValue))

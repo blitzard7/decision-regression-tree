@@ -14,7 +14,7 @@ namespace DecisionTree.Logic.Tests
             var input = TestData.TestCsvInvalidContentDataMissing;
 
             // Act 
-            var isDataPresent = formValidator.IsDataPresent(input);
+            var isDataPresent = formValidator.IsDataTagPresent(input);
 
             // Assert
             Assert.False(isDataPresent);
@@ -28,7 +28,7 @@ namespace DecisionTree.Logic.Tests
             var input = TestData.TestCsvContent;
 
             // Act 
-            var isDataPresent = formValidator.IsDataPresent(input);
+            var isDataPresent = formValidator.IsDataTagPresent(input);
 
             // Assert
             Assert.True(isDataPresent);
@@ -208,7 +208,7 @@ namespace DecisionTree.Logic.Tests
             var formValidator = new FormValidator();
 
             // Act 
-            var isDataSeparatedCorrectly = formValidator.IsDataSeparatedCorrectly(data);
+            var isDataSeparatedCorrectly = formValidator.IsRowDataSeparatedCorrectly(data);
 
             // Assert
             Assert.False(isDataSeparatedCorrectly);
@@ -223,7 +223,7 @@ namespace DecisionTree.Logic.Tests
             var formValidator = new FormValidator();
 
             // Act 
-            var isDataSeparatedCorrectly = formValidator.IsDataSeparatedCorrectly(data);
+            var isDataSeparatedCorrectly = formValidator.IsRowDataSeparatedCorrectly(data);
 
             // Assert
             Assert.True(isDataSeparatedCorrectly);

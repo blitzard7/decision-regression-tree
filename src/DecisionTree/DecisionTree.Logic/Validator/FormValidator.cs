@@ -10,6 +10,12 @@ namespace DecisionTree.Logic.Validator
         public const string ValidDataSeparator = "Data";
         public const string ValidValuesEntrySeparator = "\r\n";
 
+        /// <summary>
+        /// Checks whether the amount of columns and amount of row values are equal.
+        /// </summary>
+        /// <param name="column">The columns.</param>
+        /// <param name="rows">The row values.</param>
+        /// <returns>Returns a value indicating whether the amount of columns and row values are equal or not.</returns>
         public bool AreAmountOfRowValuesWithColumnEntriesEqual(string[] column, string[] rows)
         {
             return rows.All(row =>
@@ -19,6 +25,11 @@ namespace DecisionTree.Logic.Validator
             });
         }
 
+        /// <summary>
+        /// Checks whether the column format of the given input is valid.
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <returns>Returns a value whether the input contains a valid column format.</returns>
         public bool IsColumnFormatValid(string input)
         {
             var splitColumn = input.Split(ValidDataSeparator, StringSplitOptions.RemoveEmptyEntries);
@@ -26,7 +37,12 @@ namespace DecisionTree.Logic.Validator
             return splitColumn.Length > 0 && !splitColumn[0].Equals(input);
         }
 
-        public bool IsDataPresent(string input)
+        /// <summary>
+        /// Checks whether the Data tag is present in the input.
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <returns>Returns a value indicating whether the input contains the Data tag.</returns>
+        public bool IsDataTagPresent(string input)
         {
             var splitMetaInformation = input.Split(ValidDataSeparator, StringSplitOptions.RemoveEmptyEntries);
 
@@ -39,18 +55,28 @@ namespace DecisionTree.Logic.Validator
             return IsRowFormatValid(rows);
         }
 
-        public bool IsDataSeparatedCorrectly(string data)
+        /// <summary>
+        /// Checks whether the row data is separated correctly. 
+        /// </summary>
+        /// <param name="rowData">The row data.</param>
+        /// <returns>Returns a value whether the row data is separated correctly or not.</returns>
+        public bool IsRowDataSeparatedCorrectly(string rowData)
         {
-            var splitData = data.Split(ValidValueSeparator, StringSplitOptions.RemoveEmptyEntries);
+            var splitData = rowData.Split(ValidValueSeparator, StringSplitOptions.RemoveEmptyEntries);
 
             if (splitData.Length == 0)
             {
                 return false;
             }
 
-            return !splitData.Contains(data) || splitData.Length != 1;
+            return !splitData.Contains(rowData) || splitData.Length != 1;
         }
 
+        /// <summary>
+        /// Checks whether or not the header is present.
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <returns>Returns a value indicating whether the input contains header or not.</returns>
         public bool IsHeaderPresent(string input)
         {
             var tmpInput = input.Replace(ValidValuesEntrySeparator, string.Empty);
@@ -63,16 +89,31 @@ namespace DecisionTree.Logic.Validator
             return data.Length > 0 && !data[0].Equals(tmpInput);
         }
 
+        /// <summary>
+        /// Checks whether the meta information of the input is valid.
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <returns>Returns a value indicating whether the input contains valid meta information or not.</returns>
         public bool IsMetaInformationFormatValid(string input)
         {
-            return input.Length > 0 && (IsHeaderPresent(input) && IsDataPresent(input));
+            return input.Length > 0 && (IsHeaderPresent(input) && IsDataTagPresent(input));
         }
 
+        /// <summary>
+        /// Checks whether the rows format is valid.
+        /// </summary>
+        /// <param name="rows">The rows.</param>
+        /// <returns>Returns a value whether the rows have a valid format or not.</returns>
         public bool IsRowFormatValid(string[] rows)
         {
             return rows.Length > 0 && rows.All(IsRowFormatValid);
         }
 
+        /// <summary>
+        /// Checks whether the rows format is valid.
+        /// </summary>
+        /// <param name="row">The rows.</param>
+        /// <returns>Returns a value whether the rows have a valid format or not.</returns>
         public bool IsRowFormatValid(string row)
         {
             var data = row.Split(ValidValueSeparator, StringSplitOptions.RemoveEmptyEntries);

@@ -15,12 +15,39 @@ namespace DecisionTree.UI
     /// </summary>
     public class Application : IApplication
     {
+        /// <summary>
+        /// The csv service.
+        /// </summary>
         private readonly ICsvService _csvService;
+
+        /// <summary>
+        /// The file service.
+        /// </summary>
         private readonly IFileService _fileService;
+
+        /// <summary>
+        /// The form validator.
+        /// </summary>
         private readonly IFormValidator _formValidator;
+
+        /// <summary>
+        /// The file name.
+        /// </summary>
         private string _fileName;
+
+        /// <summary>
+        /// A value indicating whether the application is running or not.
+        /// </summary>
         private bool _isRunning;
+
+        /// <summary>
+        /// The csv data.
+        /// </summary>
         private CsvData _csvData;
+
+        /// <summary>
+        /// The tree.
+        /// </summary>
         private ITree _tree;
 
         /// <summary>
@@ -178,6 +205,7 @@ namespace DecisionTree.UI
             }
 
             VisualizeTree(_tree);
+
             ConsoleHelper.WriteLine($"Finished building tree...", ConsoleColor.DarkGray);
         }
 
@@ -204,7 +232,10 @@ namespace DecisionTree.UI
                     return; 
                 }
 
-                if (quit.Key == ConsoleKey.N) ExportData();
+                if (quit.Key == ConsoleKey.N)
+                {
+                    ExportData();
+                }
             }
 
             ConsoleHelper.Write("Enter path where to export your data: ");
@@ -258,8 +289,8 @@ namespace DecisionTree.UI
         /// <returns>Returns a value indicating whether the data for export is valid or not.</returns>
         private bool CheckExportDataForValidity(string columns, List<string> rows)
         {
-            var columnsSeparatedCorrectly = _formValidator.IsDataSeparatedCorrectly(columns);
-            var rowsSeparatedCorrectly = rows.All(x => _formValidator.IsDataSeparatedCorrectly(x));
+            var columnsSeparatedCorrectly = _formValidator.IsRowDataSeparatedCorrectly(columns);
+            var rowsSeparatedCorrectly = rows.All(x => _formValidator.IsRowDataSeparatedCorrectly(x));
             var rowsFormatValid = _formValidator.IsRowFormatValid(rows.ToArray());
 
             return columnsSeparatedCorrectly && rowsSeparatedCorrectly && rowsFormatValid;
@@ -311,7 +342,7 @@ namespace DecisionTree.UI
                 return;
             }
 
-            PrintTree(tree.Root, "");
+            PrintTree(tree.Root, string.Empty);
         }
 
         /// <summary>

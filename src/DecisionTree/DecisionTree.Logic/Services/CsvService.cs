@@ -19,7 +19,7 @@ namespace DecisionTree.Logic.Services
         private readonly IFormValidator _formValidator;
 
         /// <summary>
-        /// Initializes a new instance if the <see cref="CsvService"/> class.
+        /// Initializes a new instance of the <see cref="CsvService"/> class.
         /// </summary>
         /// <param name="formValidator">The form validator.</param>
         public CsvService(IFormValidator formValidator)
