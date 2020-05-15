@@ -18,19 +18,19 @@ namespace DecisionTree.Logic
         {
             var tmpDistinct = distinctValues.ToList();
             var tmpAllElements = allElements.ToList();
-            var occurences = new Dictionary<string, int>();
+            var occurrences = new Dictionary<string, int>();
 
-            for (int i = 0; i < tmpDistinct.Count; i++)
+            for (var i = 0; i < tmpDistinct.Count; i++)
             {
                 var current = tmpDistinct[i];
                 var amount = tmpAllElements.Count(x => x.Contains(current));
                 if (amount != 0)
                 {
-                    occurences.Add(current, amount);
+                    occurrences.Add(current, amount);
                 }
             }
 
-            return occurences;
+            return occurrences;
         }
     }
 }

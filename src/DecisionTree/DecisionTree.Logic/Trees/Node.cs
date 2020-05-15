@@ -37,10 +37,10 @@ namespace DecisionTree.Logic.Trees
 
         public void Start(CsvData data)
         {
-            TotalEntropy = data.EG;
+            TotalEntropy = data.Eg;
             Build(data);
         }
-      
+
         public void Build(CsvData data)
         {
             var currentDistinctResultSet = data.ResultSetValues.Distinct();
@@ -117,13 +117,14 @@ namespace DecisionTree.Logic.Trees
             return feature;
         }
 
-        private IEnumerable<(string featureName, double featureEntropy, double featureIG)> CalculateInformationGainOfFeatures(CsvData data)
+        private IEnumerable<(string featureName, double featureEntropy, double featureIG)>
+            CalculateInformationGainOfFeatures(CsvData data)
         {
             var informationGainOfFeatures = new List<(string, double, double)>();
 
             // Next step is to calculate Entropy for each column and possibility 
             // data.Headers.Count - 1, since we do not want to iterate over the resultcaterogy.
-            for (int i = 0; i < data.Headers.Count - 1; i++)
+            for (var i = 0; i < data.Headers.Count - 1; i++)
             {
                 // DataSet contains for given column name, all rows depending on column distinct values.
                 // This will be relevant for calculating Entropy for each column entry of row.
@@ -146,23 +147,26 @@ namespace DecisionTree.Logic.Trees
             return informationGainOfFeatures;
         }
 
-        private double CalculateEntropyOfFeature(Dictionary<string, List<string>> dataSetOfCurrentColumn, List<string> resultSetValues)
+        private double CalculateEntropyOfFeature(Dictionary<string, List<string>> dataSetOfCurrentColumn,
+            List<string> resultSetValues)
         {
             var distinctResultSetValues = resultSetValues.Distinct().ToList();
-            var entropyOfSubClasses = CalculateEntropyOfFeatureSubclasses(dataSetOfCurrentColumn, distinctResultSetValues);
+            var entropyOfSubClasses =
+                CalculateEntropyOfFeatureSubclasses(dataSetOfCurrentColumn, distinctResultSetValues);
             var totalAmount = resultSetValues.Count;
             double entropyOfFeature = 0;
 
             foreach (var key in dataSetOfCurrentColumn.Keys)
             {
-                var occurences = dataSetOfCurrentColumn[key].Count;
-                entropyOfFeature += ((double)occurences / totalAmount) * entropyOfSubClasses[key];
+                var occurrences = dataSetOfCurrentColumn[key].Count;
+                entropyOfFeature += ((double) occurrences / totalAmount) * entropyOfSubClasses[key];
             }
-            
+
             return entropyOfFeature;
         }
 
-        private Dictionary<string, double> CalculateEntropyOfFeatureSubclasses(Dictionary<string, List<string>> dataSetOfCurrentColumn, List<string> distinctResultSetValues)
+        private Dictionary<string, double> CalculateEntropyOfFeatureSubclasses(
+            Dictionary<string, List<string>> dataSetOfCurrentColumn, List<string> distinctResultSetValues)
         {
             var entropyOfEachSubClass = new Dictionary<string, double>();
             double entropyOfCurrentFeature = 0;
@@ -177,7 +181,8 @@ namespace DecisionTree.Logic.Trees
             return entropyOfEachSubClass;
         }
 
-        private (string featureName, double featureEntropy, double featureIG) SelectFeatureForSplit(List<(string featureName, double featureEntropy, double featureIG)> informationGainOfFeatures)
+        private (string featureName, double featureEntropy, double featureIG) SelectFeatureForSplit(
+            List<(string featureName, double featureEntropy, double featureIG)> informationGainOfFeatures)
         {
             // Select MAX(FeatureIG) of IG collection.
             // If n elements have the same highest IG, then select first occurence of it.

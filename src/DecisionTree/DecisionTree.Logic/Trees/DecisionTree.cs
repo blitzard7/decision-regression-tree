@@ -11,8 +11,14 @@ namespace DecisionTree.Logic.Trees
      * Node should be adapted to contain the resultValue
      */
 
+    /// <summary>
+    /// Represents the DecisionTree class.
+    /// </summary>
     public class DecisionTree : IDecisionTree
     {
+        /// <summary>
+        /// Gets or sets the root node.
+        /// </summary>
         public INode Root { get; set; }
 
         // Build tree from given CsvData
@@ -58,13 +64,13 @@ namespace DecisionTree.Logic.Trees
             {
                 return foundNode;
             }
-            
+
             if (foundNode.Children.Count != 0)
             {
                 // If the query elements contains all column names, but the decisiontree did not split at all features 
                 // we have to jump over some searchkeys if no split there is given
                 // e.g. (Overcast, sunny), (temperature, hot) -> temperature is no split category so we need to jump this!
-                for (int i = 1; i < searchKeys.Count; i++)
+                for (var i = 1; i < searchKeys.Count; i++)
                 {
                     var currentSearch = searchKeys[i];
                     GetSubsetOfNode(foundNode, currentSearch, featureValue);
@@ -77,7 +83,7 @@ namespace DecisionTree.Logic.Trees
         private INode QueryNode((string featureName, string featureValue) searchKey)
         {
             var tmpNode = Root;
-            Node foundNode = new Node();
+            var foundNode = new Node();
 
             if (tmpNode.Feature == searchKey.featureName)
             {
@@ -89,7 +95,7 @@ namespace DecisionTree.Logic.Trees
             return foundNode;
         }
 
-        private Dictionary<string, INode> GetSubsetOfNode(INode node, (string featureName, string featureValue) searchKey, string rootKey)
+        private void GetSubsetOfNode(INode node, (string featureName, string featureValue) searchKey, string rootKey)
         {
             var subset = node.Children.Where(s => s.Value.Children.ContainsKey(searchKey.featureValue))
                         .ToDictionary(dict => dict.Key, dict => dict.Value);
@@ -101,8 +107,6 @@ namespace DecisionTree.Logic.Trees
                 // each key should be removed since we are looking for searchKey.featureValue
                 subset[rootKey].Children.Remove(toDelete);
             }
-
-            return subset;
         }
     }
 }

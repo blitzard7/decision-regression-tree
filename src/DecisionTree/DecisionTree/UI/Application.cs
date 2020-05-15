@@ -9,6 +9,10 @@ using System.Linq;
 
 namespace DecisionTree.UI
 {
+    /// <summary>
+    /// Represents the Application class.
+    /// This class is used to construct the UI and user interaction.
+    /// </summary>
     public class Application : IApplication
     {
         private readonly ICsvService _csvService;
@@ -19,6 +23,12 @@ namespace DecisionTree.UI
         private CsvData _csvData;
         private ITree _tree;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Application"/> class.
+        /// </summary>
+        /// <param name="fileService">The file service.</param>
+        /// <param name="csvService">The csv service.</param>
+        /// <param name="formValidator">The form validator.</param>
         public Application(IFileService fileService, ICsvService csvService, IFormValidator formValidator)
         {
             _fileService = fileService;
@@ -26,11 +36,17 @@ namespace DecisionTree.UI
             _formValidator = formValidator;
         }
 
+        /// <summary>
+        /// Exit will quit the application.
+        /// </summary>
         public void Exit()
         {
             _isRunning = false;
         }
 
+        /// <summary>
+        /// Starts drawing the UI and handles user interaction.
+        /// </summary>
         public void Start()
         {
             _isRunning = true;
@@ -44,6 +60,9 @@ namespace DecisionTree.UI
             }
         }
 
+        /// <summary>
+        /// Draws the provided commands into the console.
+        /// </summary>
         private void DrawInterface()
         {
             ConsoleHelper.WriteLine(UserInterface.ImportData, ConsoleColor.Yellow);
@@ -55,10 +74,14 @@ namespace DecisionTree.UI
             ConsoleHelper.WriteLine(UserInterface.Quit, ConsoleColor.Yellow);
         }
 
+        /// <summary>
+        /// Handles the current user input.
+        /// </summary>
+        /// <param name="userInput">The user input.</param>
         private void HandleUserInput(ConsoleKeyInfo userInput)
         {
             string importFile = string.Empty;
-            switch(userInput.Key)
+            switch (userInput.Key)
             {
                 case ConsoleKey.NumPad1:
                 case ConsoleKey.D1:
@@ -84,7 +107,7 @@ namespace DecisionTree.UI
                     break;
                 case ConsoleKey.NumPad6:
                 case ConsoleKey.D6:
-                    VisualiseTree(_tree);
+                    VisualizeTree(_tree);
                     break;
                 case ConsoleKey.NumPad7:
                 case ConsoleKey.D7:
@@ -96,6 +119,9 @@ namespace DecisionTree.UI
             }
         }
 
+        /// <summary>
+        /// Prompts the user to import data for constructing the decision tree.
+        /// </summary>
         private void ImportDataCommand()
         {
             ConsoleHelper.Write("Please enter path to csv file:");
@@ -128,6 +154,9 @@ namespace DecisionTree.UI
             }
         }
 
+        /// <summary>
+        /// Starts calculating the tree with the provided import data and visualizes the results.
+        /// </summary>
         private void StartCalculatingTree()
         {
             if (_csvData == null)
@@ -148,10 +177,13 @@ namespace DecisionTree.UI
                 return;
             }
 
-            VisualiseTree(_tree);
+            VisualizeTree(_tree);
             ConsoleHelper.WriteLine($"Finished building tree...", ConsoleColor.DarkGray);
         }
 
+        /// <summary>
+        /// Prompts the user to enter column and row values for exporting data.
+        /// </summary>
         private void ExportData()
         {
             // user can add columns and rows including resultset 
@@ -169,12 +201,10 @@ namespace DecisionTree.UI
 
                 if (quit.Key == ConsoleKey.Y)
                 {
-                    return;
+                    return; 
                 }
-                else if (quit.Key == ConsoleKey.N)
-                {
-                    ExportData();
-                }
+
+                if (quit.Key == ConsoleKey.N) ExportData();
             }
 
             ConsoleHelper.Write("Enter path where to export your data: ");
@@ -190,6 +220,10 @@ namespace DecisionTree.UI
             }
         }
 
+        /// <summary>
+        /// Gets column information from the user for exporting data.
+        /// </summary>
+        /// <returns>Returns the retrieved column information.</returns>
         private string GetColumnInformationForExport()
         {
             ConsoleHelper.Write("Please enter your column name semi-colon \";\" separated: ");
@@ -198,6 +232,10 @@ namespace DecisionTree.UI
             return input;
         }
 
+        /// <summary>
+        /// Gets row information from the user for exporting data.
+        /// </summary>
+        /// <returns>Returns a <see cref="List{T}"/> of strings containing the row values.</returns>
         private List<string> GetRowInformationForExport()
         {
             var rows = new List<string>();
@@ -212,15 +250,27 @@ namespace DecisionTree.UI
             return rows;
         }
 
+        /// <summary>
+        /// Checks whether or not the export data is valid or not.
+        /// </summary>
+        /// <param name="columns">The column value.</param>
+        /// <param name="rows">The rows.</param>
+        /// <returns>Returns a value indicating whether the data for export is valid or not.</returns>
         private bool CheckExportDataForValidity(string columns, List<string> rows)
         {
             var columnsSeparatedCorrectly = _formValidator.IsDataSeparatedCorrectly(columns);
-            var rowsSeparatedCorretly = rows.All(x => _formValidator.IsDataSeparatedCorrectly(x));
+            var rowsSeparatedCorrectly = rows.All(x => _formValidator.IsDataSeparatedCorrectly(x));
             var rowsFormatValid = _formValidator.IsRowFormatValid(rows.ToArray());
 
-            return columnsSeparatedCorrectly && rowsSeparatedCorretly && rowsFormatValid;
+            return columnsSeparatedCorrectly && rowsSeparatedCorrectly && rowsFormatValid;
         }
 
+        /// <summary>
+        /// Queries the constructed tree.
+        /// </summary>
+        /// <param name="tree">The constructed tree.</param>
+        /// <param name="filePath">The filepath of the imported data.</param>
+        /// <returns>Returns a node containing the result of the query.</returns>
         private INode QueryTree(ITree tree, string filePath)
         {
             if (string.IsNullOrEmpty(filePath) || tree == null)
@@ -234,7 +284,7 @@ namespace DecisionTree.UI
 
             // header.count - 1 since we do not want to query resultcatergory.
             var searchKeys = new List<(string featureName, string featureValue)>();
-            for (int i = 0; i < headers.Count - 1; i++)
+            for (var i = 0; i < headers.Count - 1; i++)
             {
                 var current = headers[i];
 
@@ -249,9 +299,13 @@ namespace DecisionTree.UI
             return foundNode;
         }
 
-        private void VisualiseTree(ITree tree)
+        /// <summary>
+        /// Visualizes the tree in the console.
+        /// </summary>
+        /// <param name="tree">The constructed tree.</param>
+        private void VisualizeTree(ITree tree)
         {
-            if (tree == null || tree.Root == null)
+            if (tree?.Root == null)
             {
                 ConsoleHelper.WriteLine("No tree present. Please make sure you upload data firt before printing the tree.", ConsoleColor.Red);
                 return;
@@ -260,7 +314,12 @@ namespace DecisionTree.UI
             PrintTree(tree.Root, "");
         }
 
-        private static void PrintTree(INode tree, string indent)
+        /// <summary>
+        /// Prints the tree recursively in the console.
+        /// </summary>
+        /// <param name="tree">The tree node.</param>
+        /// <param name="indent">The indent of the current tree node.</param>
+        private void PrintTree(INode tree, string indent)
         {
             // if it is a Feature Category (ColumnName) then represent it as UpperCase.
             // features could be colorized 
@@ -291,6 +350,9 @@ namespace DecisionTree.UI
             }
         }
 
+        /// <summary>
+        /// Displays helpful information in the console.
+        /// </summary>
         private void DisplayHelp()
         {
             ConsoleHelper.WriteLine("Csv Schema", ConsoleColor.Cyan);

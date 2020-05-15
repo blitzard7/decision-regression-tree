@@ -1,6 +1,5 @@
 ﻿using DecisionTree.Logic.Interfaces;
 using DecisionTree.Logic.Services;
-using DecisionTree.Logic.Validator;
 using Moq;
 using System;
 using System.Collections.Generic;

@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-
-namespace DecisionTree.Logic.Interfaces
+﻿namespace DecisionTree.Logic.Interfaces
 {
+    /// <summary>
+    /// Represents the IDecisionTree interface.
+    /// </summary>
     public interface IDecisionTree : ITree
     {
-        void PostPruning();
     }
 }

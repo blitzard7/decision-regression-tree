@@ -23,18 +23,13 @@ namespace DecisionTree.Logic.Validator
         {
             var splitColumn = input.Split(ValidDataSeparator, StringSplitOptions.RemoveEmptyEntries);
 
-            if (splitColumn.Length <= 0 || splitColumn[0].Equals(input))
-            {
-                return false;
-            }
-
-            return true;
+            return splitColumn.Length > 0 && !splitColumn[0].Equals(input);
         }
 
         public bool IsDataPresent(string input)
         {
             var splitMetaInformation = input.Split(ValidDataSeparator, StringSplitOptions.RemoveEmptyEntries);
-            
+
             if (splitMetaInformation.Length < 2)
             {
                 return false;
@@ -53,12 +48,7 @@ namespace DecisionTree.Logic.Validator
                 return false;
             }
 
-            if (splitData.Contains(data) && splitData.Length == 1)
-            {
-                return false;
-            }
-
-            return true;
+            return !splitData.Contains(data) || splitData.Length != 1;
         }
 
         public bool IsHeaderPresent(string input)
@@ -70,35 +60,17 @@ namespace DecisionTree.Logic.Validator
             }
 
             var data = tmpInput.Split(ValidValueSeparator, StringSplitOptions.RemoveEmptyEntries);
-            if (data.Length <= 0 || data[0].Equals(tmpInput))
-            {
-                return false;
-            }
-
-            return true;
+            return data.Length > 0 && !data[0].Equals(tmpInput);
         }
 
         public bool IsMetaInformationFormatValid(string input)
         {
-            if (input.Length <= 0 || ! (IsHeaderPresent(input) && IsDataPresent(input)))
-            {
-                return false;
-            }
-
-            return true;
+            return input.Length > 0 && (IsHeaderPresent(input) && IsDataPresent(input));
         }
 
         public bool IsRowFormatValid(string[] rows)
         {
-            if (rows.Length <= 0)
-            {
-                return false;
-            }
-
-            return rows.All(x =>
-            {
-                return IsRowFormatValid(x);
-            });
+            return rows.Length > 0 && rows.All(IsRowFormatValid);
         }
 
         public bool IsRowFormatValid(string row)
@@ -106,12 +78,7 @@ namespace DecisionTree.Logic.Validator
             var data = row.Split(ValidValueSeparator, StringSplitOptions.RemoveEmptyEntries);
 
             // what happens when there is only 1 column and 1 row?
-            if (data.Length <= 0 || data[0].Equals(row))
-            {
-                return false;
-            }
-
-            return true;
+            return data.Length > 0 && !data[0].Equals(row);
         }
     }
 }
