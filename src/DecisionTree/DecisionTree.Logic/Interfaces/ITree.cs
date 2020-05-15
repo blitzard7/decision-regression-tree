@@ -18,7 +18,7 @@ namespace DecisionTree.Logic.Interfaces
         /// </summary>
         /// <param name="searchKeys">The search keys.</param>
         /// <returns>Returns the resulted node.</returns>
-        INode Query(List<(string featureName, string featureValue)> searchKeys);
+        INode Query(Dictionary<string, string> searchKeys);
         
         /// <summary>
         /// Builds the tree according to the <see cref="CsvData"/> recursively.

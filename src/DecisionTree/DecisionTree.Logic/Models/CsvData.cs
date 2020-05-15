@@ -68,13 +68,14 @@ namespace DecisionTree.Logic.Models
             // 3. create subset containing relevant headers with corresponing rows 
             //  rows should not contain distinctValue
 
+            var featureIndex = this.Headers.IndexOf(featureName);
             var headers = TakeColumnsExcludingCurrentFeature(featureName);
 
             // TODO: fix, if multiple columns (different) have the same value -> relevantRows would return incorrect data!
-            var relevantRows = this.Rows.Where(x => x.Contains(distinctValue)).ToList();
+            var relevantRows = TakeRelevantRowsFromCurrentFeature(this.Rows, featureIndex, distinctValue);
             newRows.AddRange(from item in relevantRows
-                let current = item.Replace($"{distinctValue};", string.Empty)
-                select current.Trim('\r', '\n'));
+                             let current = item.Replace($"{distinctValue};", string.Empty)
+                             select current.Trim('\r', '\n'));
 
             foreach (var header in headers)
             {
@@ -126,9 +127,23 @@ namespace DecisionTree.Logic.Models
             return tmpHeaders;
         }
 
-        private List<string> TakeRelevantRowsFromCurrentFeature(string feature)
+        private List<string> TakeRelevantRowsFromCurrentFeature(IEnumerable<string> rows, int featureIndex, string distinctValue)
         {
-            return null;
+            var relevantRows = new List<string>();
+
+            foreach (var currentRow in rows)
+            {
+                var split = currentRow.Split(FormValidator.ValidValueSeparator, StringSplitOptions.RemoveEmptyEntries).ToList();
+                
+                if (split[featureIndex] == distinctValue)
+                {
+                    //TODO: remove distinctValue entry before joining
+                    relevantRows.Add(string.Join(FormValidator.ValidValueSeparator, split));
+                    
+                }
+            }
+
+            return relevantRows;
         }
 
         /// <summary>
@@ -148,7 +163,7 @@ namespace DecisionTree.Logic.Models
             {
 
                 var split = x.Split(FormValidator.ValidValueSeparator, StringSplitOptions.RemoveEmptyEntries);
-                var selected = split[index];
+                var selected = split[headerIndex];
                 return selected;
             }).ToList();
         }

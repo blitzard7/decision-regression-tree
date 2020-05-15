@@ -107,42 +107,51 @@ namespace DecisionTree.UI
         /// <param name="userInput">The user input.</param>
         private void HandleUserInput(ConsoleKeyInfo userInput)
         {
-            string importFile = string.Empty;
             switch (userInput.Key)
             {
                 case ConsoleKey.NumPad1:
                 case ConsoleKey.D1:
+                {
                     ImportDataCommand();
                     StartCalculatingTree();
                     break;
+                }
                 case ConsoleKey.NumPad2:
                 case ConsoleKey.D2:
+                {
                     ExportData();
                     break;
+                }
                 case ConsoleKey.NumPad3:
                 case ConsoleKey.D3:
-                    // extact columnames of csvfile since those should represent the search categories (exluding ResultCategory which is the last element)
-                    QueryTree(_tree, importFile);
+                {
+                    QueryTree(_tree);
                     break;
+                }
                 case ConsoleKey.NumPad4:
                 case ConsoleKey.D4:
+                {
                     DisplayHelp();
                     break;
+                }
                 case ConsoleKey.NumPad5:
                 case ConsoleKey.D5:
+                {
                     DrawInterface();
                     break;
+                }
                 case ConsoleKey.NumPad6:
                 case ConsoleKey.D6:
+                {
                     VisualizeTree(_tree);
                     break;
+                }
                 case ConsoleKey.NumPad7:
                 case ConsoleKey.D7:
+                {
                     _isRunning = false;
                     break;
-                default:
-                    // write that command in unknown.
-                    break;
+                }
             }
         }
 
@@ -167,7 +176,7 @@ namespace DecisionTree.UI
                 var data = _fileService.Import(input);
                 _csvData = _csvService.CreateCsvDataFromFile(data);
             }
-            catch (InvalidFileExtensionException)
+            catch (FeatureNotFoundException)
             {
                 ConsoleHelper.WriteLine($"File {_fileName} has an invalid file extension. Make sure you upload a \".csv\" file.", ConsoleColor.Red);
             }
@@ -300,21 +309,19 @@ namespace DecisionTree.UI
         /// Queries the constructed tree.
         /// </summary>
         /// <param name="tree">The constructed tree.</param>
-        /// <param name="filePath">The filepath of the imported data.</param>
         /// <returns>Returns a node containing the result of the query.</returns>
-        private INode QueryTree(ITree tree, string filePath)
+        private void QueryTree(ITree tree)
         {
-            if (string.IsNullOrEmpty(filePath) || tree == null)
+            if (tree == null)
             {
                 ConsoleHelper.WriteLine("Please import first a csv file before querying the tree.", ConsoleColor.Red);
-                return null;
+                return;
             }
 
             var headers = _csvData.Headers;
             INode foundNode = null;
 
-            // header.count - 1 since we do not want to query resultcatergory.
-            var searchKeys = new List<(string featureName, string featureValue)>();
+            var searchKeys = new Dictionary<string, string>();
             for (var i = 0; i < headers.Count - 1; i++)
             {
                 var current = headers[i];
@@ -324,10 +331,38 @@ namespace DecisionTree.UI
                 var searchInput = Console.ReadLine();
 
                 // todo validate input
-                searchKeys.Add((current, searchInput));
+                searchKeys.Add(current, searchInput);
             }
 
-            return foundNode;
+            try
+            {
+                foundNode = tree.Query(searchKeys);
+            }
+            catch (InvalidOperationException ex)
+            {
+                ConsoleHelper.WriteLine($"{ex.Message}", ConsoleColor.Red);
+            }
+            catch (FeatureNotFoundException ex)
+            {
+                ConsoleHelper.WriteLine($"{ex.Message}", ConsoleColor.Red);
+            }
+
+            DisplayQueryResult(foundNode);
+        }
+
+        /// <summary>
+        /// Displays the query result into the console.
+        /// </summary>
+        /// <param name="result">The result node.</param>
+        private void DisplayQueryResult(INode result)
+        {
+            if (result == null)
+            {
+                ConsoleHelper.WriteLine("Querying the tee did not result into any node for the provided search categories.", ConsoleColor.DarkYellow);
+            }
+
+            ConsoleHelper.WriteLine("Querying the tree with the provided search categories resulted into following result:", ConsoleColor.Yellow);
+            ConsoleHelper.WriteLine(result?.Result, ConsoleColor.Green);
         }
 
         /// <summary>
@@ -374,7 +409,7 @@ namespace DecisionTree.UI
             var indentCondition = tree.Parent != null && !tree.IsLeaf;
             indent += indentCondition ? "|  " : "   ";
 
-            for (int i = 0; i < tree.Children.Count; i++)
+            for (var i = 0; i < tree.Children.Count; i++)
             {
                 var featureNode = tree.Children.ElementAt(i).Value;
                 PrintTree(featureNode, indent);
