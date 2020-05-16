@@ -60,7 +60,6 @@ namespace DecisionTree.Logic.Models
         public CsvData Filter(string featureName, string distinctValue)
         {
             // collect row data for given distinctValue.
-            var newRows = new List<string>();
             var columns = new Dictionary<string, List<string>>();
 
             // 1. collect headers where x != featurename
@@ -71,23 +70,19 @@ namespace DecisionTree.Logic.Models
             var featureIndex = this.Headers.IndexOf(featureName);
             var headers = TakeColumnsExcludingCurrentFeature(featureName);
 
-            // TODO: fix, if multiple columns (different) have the same value -> relevantRows would return incorrect data!
             var relevantRows = TakeRelevantRowsFromCurrentFeature(this.Rows, featureIndex, distinctValue);
-            newRows.AddRange(from item in relevantRows
-                             let current = item.Replace($"{distinctValue};", string.Empty)
-                             select current.Trim('\r', '\n'));
 
             foreach (var header in headers)
             {
                 var headerIndex = headers.IndexOf(header);
-                var columnValues = GetColumnValues(newRows, headerIndex);
+                var columnValues = GetColumnValues(relevantRows, headerIndex);
                 columns.Add(header, columnValues);
             }
 
             var dataSubSet = new CsvData
             {
                 Columns = columns,
-                Rows = newRows,
+                Rows = relevantRows,
                 Headers = headers
             };
 
@@ -122,7 +117,6 @@ namespace DecisionTree.Logic.Models
         {
             var tmpHeaders = new List<string>();
             tmpHeaders.AddRange(Headers);
-
             tmpHeaders.Remove(feature);
             return tmpHeaders;
         }
@@ -137,9 +131,10 @@ namespace DecisionTree.Logic.Models
                 
                 if (split[featureIndex] == distinctValue)
                 {
-                    //TODO: remove distinctValue entry before joining
-                    relevantRows.Add(string.Join(FormValidator.ValidValueSeparator, split));
-                    
+                    split[featureIndex] = string.Empty;
+                    split.RemoveAll(string.IsNullOrEmpty);
+                    var newRow = string.Join(FormValidator.ValidValueSeparator, split).Trim();
+                    relevantRows.Add(newRow);
                 }
             }
 
@@ -154,11 +149,6 @@ namespace DecisionTree.Logic.Models
         /// <returns>Returns a sub set of the columns for the requested feature.</returns>
         private List<string> GetColumnValues(IEnumerable<string> rows, int headerIndex)
         {
-            // when we are looking at the resultcategory index we are getting IndexOutOfRange
-            // if we split into subsets, since our data is getting smaller.
-
-            // hack
-            var index = this.Headers[headerIndex] == this.ResultCategory ? headerIndex - 1 : headerIndex;
             return rows.Select(x =>
             {
 

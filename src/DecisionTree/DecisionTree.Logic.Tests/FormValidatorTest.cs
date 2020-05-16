@@ -1,4 +1,6 @@
 ﻿
+using System.Collections.Generic;
+using System.Linq;
 using DecisionTree.Logic.Validator;
 using Xunit;
 
@@ -227,6 +229,35 @@ namespace DecisionTree.Logic.Tests
 
             // Assert
             Assert.True(isDataSeparatedCorrectly);
+        }
+
+        [Fact]
+        public void CalculateOccurenceOfGivenEntries_ShouldReturnPerDistinctValueItsOccurrence()
+        {
+            // Arrange
+            var distinctValues = new List<string>()
+            {
+                "Yes",
+                "No"
+            };
+
+            var allData = new List<string>()
+            {
+                "Yes",
+                "Yes",
+                "Yes",
+                "Yes",
+                "No",
+                "No"
+            };
+            var expected = new List<int>() {4, 2};
+
+
+            // Act
+            var occurrences = distinctValues.CalculateOccurenceOfGivenEntries(allData);
+
+            // Assert
+            Assert.Equal(expected, occurrences.Values);
         }
     }
 }

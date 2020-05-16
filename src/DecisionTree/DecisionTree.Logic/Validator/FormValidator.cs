@@ -1,5 +1,6 @@
 ﻿using DecisionTree.Logic.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace DecisionTree.Logic.Validator
@@ -16,12 +17,14 @@ namespace DecisionTree.Logic.Validator
         /// <param name="column">The columns.</param>
         /// <param name="rows">The row values.</param>
         /// <returns>Returns a value indicating whether the amount of columns and row values are equal or not.</returns>
-        public bool AreAmountOfRowValuesWithColumnEntriesEqual(string[] column, string[] rows)
+        public bool AreAmountOfRowValuesWithColumnEntriesEqual(IEnumerable<string> column, IEnumerable<string> rows)
         {
-            return rows.All(row =>
+            var tmpCols = column.ToArray();
+            var tmpRows = rows.ToArray();
+            return tmpRows.All(row =>
             {
                 var splitData = row.Split(ValidValueSeparator, StringSplitOptions.RemoveEmptyEntries);
-                return splitData.Length == column.Length;
+                return splitData.Length == tmpCols.Length;
             });
         }
 

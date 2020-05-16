@@ -4,6 +4,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DecisionTree.Logic.Exceptions;
 using Xunit;
 
 namespace DecisionTree.Logic.Tests
@@ -57,7 +58,7 @@ namespace DecisionTree.Logic.Tests
             var csvService = new CsvService(formValidatorMock.Object);
             var expected = new List<string>()
             {
-                "Sunny;Hot;High;Weak;Yes;"
+                "sunny;hot;high;weak;yes;"
             };
 
             var input = "Sunny;Hot;High;Weak;Yes;";
@@ -118,7 +119,7 @@ namespace DecisionTree.Logic.Tests
         }
 
         [Fact]
-        public void CreateColumns_ShouldReturnEmptyDictionaryWhenMetaInformationIsInvalid()
+        public void CreateColumns_ShouldThrowCsvRowFormatExceptionWhenMetaInformationIsInvalid()
         {
             // Arrange
             var formValidatorMock = new Mock<IFormValidator>();
@@ -126,16 +127,15 @@ namespace DecisionTree.Logic.Tests
             var csvService = new CsvService(formValidatorMock.Object);
             string[] metaInformation = new string[2] { "asdf,asdf,asdf", "1,2,3,4" };
 
-            // Act 
-            var columns = csvService.CreateColumns(metaInformation);
-
-            // Assert
-            Assert.Empty(columns);
-            formValidatorMock.Verify(x => x.IsRowFormatValid(It.IsAny<string[]>()), Times.Once);
+            // Act && Assert
+            Assert.Throws<CsvRowFormatInvalidException>(() =>
+            {
+                csvService.CreateColumns(metaInformation);
+            });
         }
 
         [Fact]
-        public void CreateColumns_ShouldReturnEmptyValuesInDictionaryWhenDataInformationIsInvalid()
+        public void CreateColumns_ShouldThrowCsvRowFormatExceptionWhenDataInformationIsInvalid()
         {
             // Arrange
             var formValidatorMock = new Mock<IFormValidator>();
@@ -143,12 +143,11 @@ namespace DecisionTree.Logic.Tests
             var csvService = new CsvService(formValidatorMock.Object);
             string[] metaInformation = new string[2] { "col1;col2;col3", "1,2,3,4" };
 
-            // Act 
-            var columns = csvService.CreateColumns(metaInformation);
-
-            // Assert
-            Assert.Empty(columns.Values);
-            formValidatorMock.Verify(x => x.IsRowFormatValid(It.IsAny<string[]>()), Times.Once);
+            // Act && Assert
+            Assert.Throws<CsvRowFormatInvalidException>(() =>
+            {
+                csvService.CreateColumns(metaInformation);
+            });
         }
 
         [Fact]

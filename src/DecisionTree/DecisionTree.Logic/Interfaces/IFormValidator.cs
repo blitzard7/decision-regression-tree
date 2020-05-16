@@ -1,4 +1,6 @@
-﻿namespace DecisionTree.Logic.Interfaces
+﻿using System.Collections.Generic;
+
+namespace DecisionTree.Logic.Interfaces
 {
     /// <summary>
     /// Represents the IFormValidator
@@ -11,7 +13,7 @@
         /// <param name="column">The columns.</param>
         /// <param name="rows">The row values.</param>
         /// <returns>Returns a value indicating whether the amount of columns and row values are equal or not.</returns>
-        bool AreAmountOfRowValuesWithColumnEntriesEqual(string[] column, string[] rows);
+        bool AreAmountOfRowValuesWithColumnEntriesEqual(IEnumerable<string> column, IEnumerable<string> rows);
 
         /// <summary>
         /// Checks whether the column format of the given input is valid.

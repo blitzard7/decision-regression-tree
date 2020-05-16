@@ -112,8 +112,11 @@ namespace DecisionTree.UI
                 case ConsoleKey.NumPad1:
                 case ConsoleKey.D1:
                 {
-                    ImportDataCommand();
-                    StartCalculatingTree();
+                    if (ImportDataCommand())
+                    {
+                        StartCalculatingTree();
+                    }
+
                     break;
                 }
                 case ConsoleKey.NumPad2:
@@ -158,7 +161,8 @@ namespace DecisionTree.UI
         /// <summary>
         /// Prompts the user to import data for constructing the decision tree.
         /// </summary>
-        private void ImportDataCommand()
+        /// <returns>Returns a value indicating whether the import of data was successfully or not.</returns>
+        private bool ImportDataCommand()
         {
             ConsoleHelper.Write("Please enter path to csv file:");
             var input = Console.ReadLine();
@@ -166,7 +170,7 @@ namespace DecisionTree.UI
             if (string.IsNullOrEmpty(input) || string.IsNullOrWhiteSpace(input))
             {
                 ConsoleHelper.WriteLine("No path has been entered. Make sure you enter a path.", ConsoleColor.Red);
-                return;
+                return false;
             }
 
             _fileName = Path.GetFileName(input);
@@ -178,16 +182,27 @@ namespace DecisionTree.UI
             }
             catch (FeatureNotFoundException)
             {
-                ConsoleHelper.WriteLine($"File {_fileName} has an invalid file extension. Make sure you upload a \".csv\" file.", ConsoleColor.Red);
+                ConsoleHelper.WriteLine(
+                    $"File {_fileName} has an invalid file extension. Make sure you upload a \".csv\" file.", ConsoleColor.Red);
+                return false;
             }
-            catch (CsvDataInvalidMetadataException)
+            catch (CsvDataInvalidMetadataException ex)
             {
-                ConsoleHelper.WriteLine($"File {_fileName} does not match with expected format.", ConsoleColor.Red);
+                ConsoleHelper.WriteLine($"Importing file {_fileName} encountered an error: {ex.Message}", ConsoleColor.Red);
+                return false;
+            }
+            catch (CsvRowFormatInvalidException)
+            {
+                ConsoleHelper.WriteLine($"Rows of {_fileName} does not match with expected format.", ConsoleColor.Red);
+                return false;
             }
             catch (Exception)
             {
                 ConsoleHelper.WriteLine($"While parsing {_fileName} an unexpected error has been encountered.", ConsoleColor.Red);
+                return false;
             }
+
+            return true;
         }
 
         /// <summary>
@@ -249,15 +264,17 @@ namespace DecisionTree.UI
 
             ConsoleHelper.Write("Enter path where to export your data: ");
             var path = Console.ReadLine();
-
+            var exportPath = string.Empty;
             try
             {
-                _fileService.Export(columns, rows, path);
+                exportPath = _fileService.Export(columns, rows, path);
             }
             catch (Exception)
             {
                 ConsoleHelper.WriteLine($"An error has been encountered while exporting to {path}.");
             }
+
+            ConsoleHelper.WriteLine($"File has been successfully exported to {exportPath}", ConsoleColor.DarkYellow);
         }
 
         /// <summary>
@@ -319,7 +336,7 @@ namespace DecisionTree.UI
             }
 
             var headers = _csvData.Headers;
-            INode foundNode = null;
+            INode foundNode;
 
             var searchKeys = new Dictionary<string, string>();
             for (var i = 0; i < headers.Count - 1; i++)
@@ -341,10 +358,12 @@ namespace DecisionTree.UI
             catch (InvalidOperationException ex)
             {
                 ConsoleHelper.WriteLine($"{ex.Message}", ConsoleColor.Red);
+                return;
             }
             catch (FeatureNotFoundException ex)
             {
                 ConsoleHelper.WriteLine($"{ex.Message}", ConsoleColor.Red);
+                return;
             }
 
             DisplayQueryResult(foundNode);
@@ -356,12 +375,7 @@ namespace DecisionTree.UI
         /// <param name="result">The result node.</param>
         private void DisplayQueryResult(INode result)
         {
-            if (result == null)
-            {
-                ConsoleHelper.WriteLine("Querying the tee did not result into any node for the provided search categories.", ConsoleColor.DarkYellow);
-            }
-
-            ConsoleHelper.WriteLine("Querying the tree with the provided search categories resulted into following result:", ConsoleColor.Yellow);
+            ConsoleHelper.WriteLine("Querying the tree with the provided search categories resulted into following category:", ConsoleColor.DarkYellow);
             ConsoleHelper.WriteLine(result?.Result, ConsoleColor.Green);
         }
 

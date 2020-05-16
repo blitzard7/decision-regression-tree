@@ -20,6 +20,6 @@ namespace DecisionTree.Logic.Interfaces
         /// <param name="columns">The columns.</param>
         /// <param name="rows">The rows.</param>
         /// <param name="path">The export file path.</param>
-        void Export(string columns, IEnumerable<string> rows, string path);
+        string Export(string columns, IEnumerable<string> rows, string path);
     }
 }

@@ -31,8 +31,10 @@ namespace DecisionTree.Logic.Services
         /// <param name="columns">The columns.</param>
         /// <param name="rows">The rows.</param>
         /// <param name="path">The export file path.</param>
-        public void Export(string columns, IEnumerable<string> rows, string path)
+        /// <returns>Returns tha path where the file has been exported.</returns>
+        public string Export(string columns, IEnumerable<string> rows, string path)
         {
+            string exportPath = string.Empty;
             var lines = new List<string>
             {
                 columns,
@@ -40,7 +42,51 @@ namespace DecisionTree.Logic.Services
             };
 
             lines.AddRange(rows);
-            File.AppendAllLines(path, lines);
+
+            if (CheckIfPathIsDirectory(path) )
+            {
+                exportPath = HandleExportForDirectoryPathInput(path, lines);
+            }
+            else
+            {
+                exportPath = HandleExportForFilePathInput(path, lines);
+            }
+
+            return exportPath;
+        }
+
+        private bool CheckIfPathIsDirectory(string path)
+        {
+            var fileAttribute = File.GetAttributes(path);
+            return fileAttribute.HasFlag(FileAttributes.Directory);
+        }
+
+        /// <summary>
+        /// Handles the export of the entered data when path is pointing to a directory.
+        /// A new file with the name "exportData.csv" will be created.
+        /// </summary>
+        /// <param name="path">The directory path.</param>
+        /// <param name="lines">The lines to export.</param>
+        /// <returns>Returns the path where the file has been exported.</returns>
+        private string HandleExportForDirectoryPathInput(string path, IEnumerable<string> lines)
+        {
+            const string fileName = "exportData.csv";
+            var filePath = Path.Combine(path, fileName);
+            File.WriteAllLines(filePath, lines);
+            return filePath;
+        }
+
+        /// <summary>
+        /// Handles the export of the entered data when path is pointing to a file.
+        /// If the data already exists, the content will be overwritten with the new one.
+        /// </summary>
+        /// <param name="path">The file path.</param>
+        /// <param name="lines">The lines to export.</param>
+        /// <returns>Returns the path where the file has been exported.</returns>
+        private string HandleExportForFilePathInput(string path, IEnumerable<string> lines)
+        {
+            File.WriteAllLines(path, lines);
+            return path;
         }
 
         /// <summary>
