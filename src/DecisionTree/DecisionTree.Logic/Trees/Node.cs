@@ -7,45 +7,91 @@ using System.Linq;
 
 namespace DecisionTree.Logic.Trees
 {
+    /// <summary>
+    /// Represents the Node class.
+    /// </summary>
     public class Node : INode
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Node"/> class.
+        /// </summary>
         public Node()
         {
             Children = new Dictionary<string, INode>();
             CurrentClassification = new Dictionary<string, int>();
         }
 
+        /// <summary>
+        /// Gets or sets the feature name.
+        /// </summary>
         public string Feature { get; set; }
 
+        /// <summary>
+        /// Gets or sets the parent.
+        /// </summary>
         public INode Parent { get; set; }
 
+        /// <summary>
+        /// Gets or sets the children containing the feature value as key and the pointing node.
+        /// </summary>
         public Dictionary<string, INode> Children { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the node is leaf or not.
+        /// </summary>
         public bool IsLeaf => Children.Values.Count == 0;
 
+        /// <summary>
+        /// Gets or sets the result value.
+        /// </summary>
         public string Result { get; set; }
 
+        /// <summary>
+        /// Gets or sets the current classification containing distinct result values and its occurrence.
+        /// </summary>
         public Dictionary<string, int> CurrentClassification { get; set; }
 
+        /// <summary>
+        /// Gets or sets the node entropy.
+        /// </summary>
         public double NodeEntropy { get; private set; }
 
+        /// <summary>
+        /// Gets or sets the information gain of the node.
+        /// </summary>
         public double NodeInformationGain { get; private set; }
 
+        /// <summary>
+        /// Gets or sets the total entropy.
+        /// </summary>
         public double TotalEntropy { get; private set; }
 
+        /// <summary>
+        /// Gets or sets the value of the current feature.
+        /// </summary>
         public string FeatureValue { get; private set; }
 
+        /// <summary>
+        /// Starts calculating the tree.
+        /// </summary>
+        /// <param name="data">The input data.</param>
         public void Start(CsvData data)
         {
-            TotalEntropy = data.EG;
+            TotalEntropy = data.Eg;
             Build(data);
         }
-      
+
+        /// <summary>
+        /// Builds the tree recursively.
+        /// </summary>
+        /// <param name="data">The input data.</param>
         public void Build(CsvData data)
         {
             var currentDistinctResultSet = data.ResultSetValues.Distinct();
             CurrentClassification = currentDistinctResultSet.CalculateOccurenceOfGivenEntries(data.ResultSetValues);
 
+            // if current subset of data contains homogeneous data then return current node,
+            // since current node is leaf node containing the result.
             if (ContainsHomogeneousData(data))
             {
                 return;
@@ -64,14 +110,10 @@ namespace DecisionTree.Logic.Trees
                     TotalEntropy = TotalEntropy,
                 };
 
-                // TODO: take care of correct placing NodeEntropy
-                // What happens with subFeatureEntropy? -> subfeatureEntropy != NodeEntropy
                 NodeEntropy = feature.FeatureEntropy;
                 NodeInformationGain = feature.FeatureInformationGain;
 
                 var currentData = data.Filter(feature.Name, distinctValue);
-                // calculate current classification (from current data set calculate how many times each distinct resultValue occurs)
-                // If feature selected, the subset of csvdata should not contain the actual feature in header anymore.
                 node.Build(currentData);
                 this.Children.Add(distinctValue, node);
             }
@@ -79,19 +121,25 @@ namespace DecisionTree.Logic.Trees
             return;
         }
 
+        /// <summary>
+        /// Checks whether the current split data contains only homogeneous data or not.
+        /// </summary>
+        /// <param name="data">The split data.</param>
+        /// <returns>Returns whether the current split data is homogeneous or not.</returns>
         public bool ContainsHomogeneousData(CsvData data)
         {
-            // Check if rows contains only homogeneous data.
-            // need to calculate the entropy 
             var distinctResultValues = data.GetUniqueColumnValues(data.ResultCategory).ToList();
+            
             if (distinctResultValues.Count == 0)
             {
                 throw new ArgumentException("Result values where empty.");
             }
 
+            // if our distinct result values contains one entry or
+            // the subset of data contains one header element (if one header then this header represents the result category column)
+            // then we have reached homogeneous data.
             if (distinctResultValues.Count == 1 || data.Headers.Count == 1)
             {
-                // data.headers.count == 1 -> represents the ResultCategory therefore we have homogeneous data.
                 Result = distinctResultValues[0];
                 return true;
             }
@@ -99,39 +147,50 @@ namespace DecisionTree.Logic.Trees
             return false;
         }
 
+        /// <summary>
+        /// Calculates the feature.
+        /// </summary>
+        /// <param name="data">The csv data corresponding the current feature.</param>
+        /// <returns>Returns the feature.</returns>
         private Feature CalculateFeature(CsvData data)
         {
+            // calculate the information gain of all features and return per feature the feature name, current entropy and calculated information gain.
             var informationGainOfFeatures = CalculateInformationGainOfFeatures(data).ToList();
 
             // We have to calculate for each feature the IG and then select MAX(FeatureIG).
-            var (featureName, featureEntropy, featureIG) = SelectFeatureForSplit(informationGainOfFeatures);
+            var (featureName, featureEntropy, featureIg) = SelectFeatureForSplit(informationGainOfFeatures);
             var toSelectFeatureValues = data.Columns[featureName];
             var feature = new Feature()
             {
                 Name = featureName,
                 Values = toSelectFeatureValues,
                 FeatureEntropy = featureEntropy,
-                FeatureInformationGain = featureIG
+                FeatureInformationGain = featureIg
             };
 
             return feature;
         }
 
-        private IEnumerable<(string featureName, double featureEntropy, double featureIG)> CalculateInformationGainOfFeatures(CsvData data)
+        /// <summary>
+        /// Calculates the information gain of the current feature.
+        /// </summary>
+        /// <param name="data">The data.</param>
+        /// <returns>Returns a list containing information of the feature name with its entropy and information gain.</returns>
+        private IEnumerable<(string featureName, double featureEntropy, double featureIg)> CalculateInformationGainOfFeatures(CsvData data)
         {
             var informationGainOfFeatures = new List<(string, double, double)>();
 
             // Next step is to calculate Entropy for each column and possibility 
-            // data.Headers.Count - 1, since we do not want to iterate over the resultcaterogy.
-            for (int i = 0; i < data.Headers.Count - 1; i++)
+            // data.Headers.Count - 1, since we do not want to iterate over the result category.
+            for (var i = 0; i < data.Headers.Count - 1; i++)
             {
                 // DataSet contains for given column name, all rows depending on column distinct values.
                 // This will be relevant for calculating Entropy for each column entry of row.
                 var dataSetOfCurrentColumn = new Dictionary<string, List<string>>();
                 var currentColumn = data.Headers[i];
-                var distinctColumValues = data.GetUniqueColumnValues(currentColumn);
+                var uniqueColumnValues = data.GetUniqueColumnValues(currentColumn);
 
-                foreach (var val in distinctColumValues)
+                foreach (var val in uniqueColumnValues)
                 {
                     var specificRows = data.GetSpecificRowEntries(val).ToList();
                     dataSetOfCurrentColumn.Add(val, specificRows);
@@ -146,43 +205,61 @@ namespace DecisionTree.Logic.Trees
             return informationGainOfFeatures;
         }
 
-        private double CalculateEntropyOfFeature(Dictionary<string, List<string>> dataSetOfCurrentColumn, List<string> resultSetValues)
+        /// <summary>
+        /// Calculates the entropy of the feature.
+        /// </summary>
+        /// <param name="dataSetOfCurrentColumn">The data set of current feature column.</param>
+        /// <param name="resultSetValues">The result set.</param>
+        /// <returns>Returns the entropy of the feature.</returns>
+        private double CalculateEntropyOfFeature(Dictionary<string, List<string>> dataSetOfCurrentColumn, IReadOnlyCollection<string> resultSetValues)
         {
             var distinctResultSetValues = resultSetValues.Distinct().ToList();
-            var entropyOfSubClasses = CalculateEntropyOfFeatureSubclasses(dataSetOfCurrentColumn, distinctResultSetValues);
+            var entropyOfSubClasses =
+                CalculateEntropyOfFeatureSubclasses(dataSetOfCurrentColumn, distinctResultSetValues);
             var totalAmount = resultSetValues.Count;
             double entropyOfFeature = 0;
 
             foreach (var key in dataSetOfCurrentColumn.Keys)
             {
-                var occurences = dataSetOfCurrentColumn[key].Count;
-                entropyOfFeature += ((double)occurences / totalAmount) * entropyOfSubClasses[key];
+                var occurrences = dataSetOfCurrentColumn[key].Count;
+                entropyOfFeature += ((double) occurrences / totalAmount) * entropyOfSubClasses[key];
             }
-            
+
             return entropyOfFeature;
         }
 
-        private Dictionary<string, double> CalculateEntropyOfFeatureSubclasses(Dictionary<string, List<string>> dataSetOfCurrentColumn, List<string> distinctResultSetValues)
+        /// <summary>
+        /// Calculates the entropy of each feature value.
+        /// </summary>
+        /// <param name="dataSetOfCurrentColumn">The data set of current feature column.</param>
+        /// <param name="distinctResultSetValues">The distinct result set values.</param>
+        /// <returns>Returns a dictionary containing the feature value as key and its corresponding entropy.</returns>
+        private Dictionary<string, double> CalculateEntropyOfFeatureSubclasses(
+            Dictionary<string, List<string>> dataSetOfCurrentColumn, List<string> distinctResultSetValues)
         {
             var entropyOfEachSubClass = new Dictionary<string, double>();
-            double entropyOfCurrentFeature = 0;
             foreach (var key in dataSetOfCurrentColumn.Keys)
             {
                 var currentDataSet = dataSetOfCurrentColumn[key];
                 var eCurrent = Calculation.CalculateEntropy(distinctResultSetValues, currentDataSet);
-                entropyOfCurrentFeature += eCurrent;
                 entropyOfEachSubClass.Add(key, eCurrent);
             }
 
             return entropyOfEachSubClass;
         }
 
-        private (string featureName, double featureEntropy, double featureIG) SelectFeatureForSplit(List<(string featureName, double featureEntropy, double featureIG)> informationGainOfFeatures)
+        /// <summary>
+        /// Selects the feature with the maximum information gain for tree split.
+        /// </summary>
+        /// <param name="informationGainOfFeatures">The features with the information gain.</param>
+        /// <returns>Returns the feature with the maximum information gain.</returns>
+        private (string featureName, double featureEntropy, double featureIg) SelectFeatureForSplit(
+            IReadOnlyCollection<(string featureName, double featureEntropy, double featureIg)> informationGainOfFeatures)
         {
             // Select MAX(FeatureIG) of IG collection.
             // If n elements have the same highest IG, then select first occurence of it.
-            var toSelectFeature = informationGainOfFeatures.Max(x => x.featureIG);
-            return informationGainOfFeatures.First(x => x.featureIG == toSelectFeature);
+            var toSelectFeature = informationGainOfFeatures.Max(x => x.featureIg);
+            return informationGainOfFeatures.First(x => x.featureIg == toSelectFeature);
         }
     }
 }

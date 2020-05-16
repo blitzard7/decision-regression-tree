@@ -5,8 +5,16 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DecisionTree.Logic.IoC
 {
+    /// <summary>
+    /// Represents the IoCHelper class.
+    /// </summary>
     public class IoCHelper
     {
+        /// <summary>
+        /// Registers dependencies for dependency injection.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        /// <returns>Returns the constructed service provider.</returns>
         public static ServiceProvider RegisterDependencies(IServiceCollection services)
         {
             services.AddOptions();

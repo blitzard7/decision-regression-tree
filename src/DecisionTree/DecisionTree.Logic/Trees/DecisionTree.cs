@@ -1,8 +1,9 @@
-﻿using DecisionTree.Logic.Interfaces;
-using DecisionTree.Logic.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DecisionTree.Logic.Exceptions;
+using DecisionTree.Logic.Interfaces;
+using DecisionTree.Logic.Models;
 
 namespace DecisionTree.Logic.Trees
 {
@@ -11,8 +12,14 @@ namespace DecisionTree.Logic.Trees
      * Node should be adapted to contain the resultValue
      */
 
+    /// <summary>
+    /// Represents the DecisionTree class.
+    /// </summary>
     public class DecisionTree : IDecisionTree
     {
+        /// <summary>
+        /// Gets or sets the root node.
+        /// </summary>
         public INode Root { get; set; }
 
         // Build tree from given CsvData
@@ -20,6 +27,12 @@ namespace DecisionTree.Logic.Trees
         // Entropy and InformationGain is calculated 
         // Stop groving after all leafe nodes are homogeneouse (Post-pruning)
         // Returns DecisionTree
+
+        /// <summary>
+        /// Builds the tree according to the <see cref="CsvData"/> recursively.
+        /// </summary>
+        /// <param name="data">The csv data.</param>
+        /// <returns>Returns the constructed tree.</returns>
         public ITree BuildTree(CsvData data)
         {
             // 1. determine root node (column) of tree
@@ -33,76 +46,39 @@ namespace DecisionTree.Logic.Trees
             return this;
         }
 
-        public void PostPruning()
+        /// <summary>
+        /// Queries the constructed tree with the given search keys.
+        /// </summary>
+        /// <param name="searchKeys">The search keys.</param>
+        /// <exception cref="FeatureNotFoundException">Is thrown when feature is not found.</exception>
+        /// <returns>Returns the resulted node.</returns>
+        public INode Query(Dictionary<string, string> searchKeys)
         {
-            throw new NotImplementedException();
-        }
-
-        public INode Query(List<(string featureName, string featureValue)> searchKeys)
-        {
-            // List of searchkey should contain rootfeature name as first element.
-            // If there is no tree then return null.
             if (Root == null)
             {
                 return null;
             }
 
-            var tmpRoot = Root;
+            var tempNode = Root;
 
-            // Assumption Rootnode is on index 0.
-            var (featureName, featureValue) = searchKeys[0];
-            var foundNode = QueryNode((featureName, featureValue));
-            var foundNodeAllLeaves = foundNode.Children.All(x => x.Value.IsLeaf);
-
-            if (foundNodeAllLeaves)
+            while (!tempNode.IsLeaf)
             {
-                return foundNode;
-            }
-            
-            if (foundNode.Children.Count != 0)
-            {
-                // If the query elements contains all column names, but the decisiontree did not split at all features 
-                // we have to jump over some searchkeys if no split there is given
-                // e.g. (Overcast, sunny), (temperature, hot) -> temperature is no split category so we need to jump this!
-                for (int i = 1; i < searchKeys.Count; i++)
+                var mySearchThingy = tempNode.Feature;
+                
+                if (!searchKeys.TryGetValue(mySearchThingy, out var myChildKeyThingy))
                 {
-                    var currentSearch = searchKeys[i];
-                    GetSubsetOfNode(foundNode, currentSearch, featureValue);
+                    throw new InvalidOperationException($"No value for feature {mySearchThingy} have been provided.");
                 }
+
+                if (!tempNode.Children.TryGetValue(myChildKeyThingy, out var tmpChildNode))
+                {
+                    throw new FeatureNotFoundException($"Getting child node by querying tree with key {myChildKeyThingy} did not result in any node.");
+                }
+
+                tempNode = tmpChildNode;
             }
 
-            return foundNode;
-        }
-
-        private INode QueryNode((string featureName, string featureValue) searchKey)
-        {
-            var tmpNode = Root;
-            Node foundNode = new Node();
-
-            if (tmpNode.Feature == searchKey.featureName)
-            {
-                foundNode.Feature = tmpNode.Feature;
-                var childNode = tmpNode.Children[searchKey.featureValue];
-                foundNode.Children.Add(searchKey.featureValue, childNode);
-            }
-
-            return foundNode;
-        }
-
-        private Dictionary<string, INode> GetSubsetOfNode(INode node, (string featureName, string featureValue) searchKey, string rootKey)
-        {
-            var subset = node.Children.Where(s => s.Value.Children.ContainsKey(searchKey.featureValue))
-                        .ToDictionary(dict => dict.Key, dict => dict.Value);
-
-            // we have to get the keys which are not asked from the children dictionary.
-            var toDeleteKeys = subset[rootKey].Children.Keys.Where(x => x != searchKey.featureValue).ToList();
-            foreach (var toDelete in toDeleteKeys)
-            {
-                // each key should be removed since we are looking for searchKey.featureValue
-                subset[rootKey].Children.Remove(toDelete);
-            }
-
-            return subset;
+            return tempNode;
         }
     }
 }

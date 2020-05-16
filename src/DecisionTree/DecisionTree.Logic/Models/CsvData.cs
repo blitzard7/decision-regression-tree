@@ -6,8 +6,14 @@ using System.Linq;
 
 namespace DecisionTree.Logic.Models
 {
+    /// <summary>
+    /// Represents the CsvData class.
+    /// </summary>
     public class CsvData
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CsvData"/> class.
+        /// </summary>
         public CsvData()
         {
             Columns = new Dictionary<string, List<string>>();
@@ -15,34 +21,45 @@ namespace DecisionTree.Logic.Models
             Headers = new List<string>();
         }
 
+        /// <summary>
+        /// Gets or sets the columns.
+        /// </summary>
         public Dictionary<string, List<string>> Columns { get; set; }
+
+        /// <summary>
+        /// Gets or sets the rows.
+        /// </summary>
         public List<string> Rows { get; set; }
+
+        /// <summary>
+        /// Gets or sets the headers, which are represented as column names.
+        /// </summary>
         public List<string> Headers { get; set; }
-        public List<string> ResultSetValues { get => GetResultSetValues(); }
-        public string ResultCategory
-        {
-            get
-            {
-                if (this.Headers.Count > 0)
-                {
-                    return this.Headers[^1];
-                }
 
-                return string.Empty;
-            }
-        }
-        public double EG { get => GetEntropyOfTable(); }
+        /// <summary>
+        /// Gets the current result set values.
+        /// </summary>
+        public List<string> ResultSetValues => GetResultSetValues();
 
-        private double GetEntropyOfTable() 
-        {
-            var distinctResultValues = this.GetUniqueColumnValues(ResultCategory).ToList();
-            return Calculation.CalculateEntropy(distinctResultValues, ResultSetValues);
-        }
+        /// <summary>
+        /// Gets the result category.
+        /// </summary>
+        public string ResultCategory => Headers.Count > 0 ? Headers[^1] : string.Empty;
 
+        /// <summary>
+        /// Gets the entropy of the table.
+        /// </summary>
+        public double Eg => CalculateEntropyOfTable();
+
+        /// <summary>
+        /// Filters the current csv data according to the requested feature and its distinct value.
+        /// </summary>
+        /// <param name="featureName">The requested feature.</param>
+        /// <param name="distinctValue">The requested distinct feature value.</param>
+        /// <returns>Returns a subset of the csv data.</returns>
         public CsvData Filter(string featureName, string distinctValue)
         {
             // collect row data for given distinctValue.
-            var newRows = new List<string>();
             var columns = new Dictionary<string, List<string>>();
 
             // 1. collect headers where x != featurename
@@ -50,62 +67,93 @@ namespace DecisionTree.Logic.Models
             // 3. create subset containing relevant headers with corresponing rows 
             //  rows should not contain distinctValue
 
+            var featureIndex = this.Headers.IndexOf(featureName);
             var headers = TakeColumnsExcludingCurrentFeature(featureName);
 
-            // TODO: fix, if multiple columns (different) have the same value -> relevantRows would return incorrect data!
-            var relevantRows = this.Rows.Where(x => x.Contains(distinctValue)).ToList();
-            newRows.AddRange(from item in relevantRows
-                             let current = item.Replace($"{distinctValue};", string.Empty)
-                             select current.Trim('\r', '\n'));
+            var relevantRows = TakeRelevantRowsFromCurrentFeature(this.Rows, featureIndex, distinctValue);
 
             foreach (var header in headers)
             {
                 var headerIndex = headers.IndexOf(header);
-                var columnValues = GetColumnValues(newRows, headerIndex);
+                var columnValues = GetColumnValues(relevantRows, headerIndex);
                 columns.Add(header, columnValues);
             }
 
             var dataSubSet = new CsvData
             {
                 Columns = columns,
-                Rows = newRows,
+                Rows = relevantRows,
                 Headers = headers
             };
 
             return dataSubSet;
         }
 
-        private List<string> GetResultSetValues()
+        /// <summary>
+        /// Calculates the entropy of the table.
+        /// </summary>
+        /// <returns>Returns the entropy.</returns>
+        private double CalculateEntropyOfTable()
         {
-            return this.Columns[ResultCategory];
+            var distinctResultValues = this.GetUniqueColumnValues(ResultCategory).ToList();
+            return Calculation.CalculateEntropy(distinctResultValues, ResultSetValues);
         }
 
+        /// <summary>
+        /// Gets the result set values.
+        /// </summary>
+        /// <returns>Returns the result set values.</returns>
+        private List<string> GetResultSetValues()
+        {
+            return Columns[ResultCategory];
+        }
+
+        /// <summary>
+        /// Take columns without the current requested feature.
+        /// </summary>
+        /// <param name="feature">The requested feature.</param>
+        /// <returns>Returns the column names excluding the requested feature.</returns>
         private List<string> TakeColumnsExcludingCurrentFeature(string feature)
         {
             var tmpHeaders = new List<string>();
-            tmpHeaders.AddRange(this.Headers);
-
+            tmpHeaders.AddRange(Headers);
             tmpHeaders.Remove(feature);
             return tmpHeaders;
         }
 
-        private List<string> TakeRelevantRowsFromCurrentFeature(string feature)
+        private List<string> TakeRelevantRowsFromCurrentFeature(IEnumerable<string> rows, int featureIndex, string distinctValue)
         {
-            return null;
+            var relevantRows = new List<string>();
+
+            foreach (var currentRow in rows)
+            {
+                var split = currentRow.Split(FormValidator.ValidValueSeparator, StringSplitOptions.RemoveEmptyEntries).ToList();
+                
+                if (split[featureIndex] == distinctValue)
+                {
+                    split[featureIndex] = string.Empty;
+                    split.RemoveAll(string.IsNullOrEmpty);
+                    var newRow = string.Join(FormValidator.ValidValueSeparator, split).Trim();
+                    relevantRows.Add(newRow);
+                }
+            }
+
+            return relevantRows;
         }
 
-        private List<string> GetColumnValues(List<string> rows, int headerIndex)
+        /// <summary>
+        /// Gets the row values for current column index.
+        /// </summary>
+        /// <param name="rows">The rows.</param>
+        /// <param name="headerIndex">The current column index.</param>
+        /// <returns>Returns a sub set of the columns for the requested feature.</returns>
+        private List<string> GetColumnValues(IEnumerable<string> rows, int headerIndex)
         {
-            // when we are looking at the resultcategory index we are getting IndexOutOfRange
-            // if we split into subsets, since our data is getting smaller.
-            
-            // hack
-            var index = this.Headers[headerIndex] == this.ResultCategory ? headerIndex - 1 : headerIndex;
             return rows.Select(x =>
             {
 
                 var split = x.Split(FormValidator.ValidValueSeparator, StringSplitOptions.RemoveEmptyEntries);
-                var selected = split[index];
+                var selected = split[headerIndex];
                 return selected;
             }).ToList();
         }
