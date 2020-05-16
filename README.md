@@ -4,23 +4,23 @@ Adaptive Softwaresystems Project 1
 ## Todo
 ### Logic
 - [x] create library for tree logic
-- [ ] build tree structure
-- [ ] implement decision tree (ID3) Algorithm
-- [ ] implement entropy calculation
-- [ ] implement information gain calculation
-- [ ] implement learn mechanism
+- [x] build tree structure
+- [x] implement decision tree (ID3) Algorithm
+- [x] implement entropy calculation
+- [x] implement information gain calculation
+- [x] implement learn mechanism
 
 ### Handling
 - [x] create console application
-- [ ] read from file (csv)?
-- [ ] add simple visualization
+- [x] read from file (csv)?
+- [x] add simple visualization
 
 ### Data 
-- [ ] provide sample data
+- [x] provide sample data
 
 ### Research
 - [ ] research about regression tree 
-- [ ] research how to visualize data 
+- [x] research how to visualize data 
 
 ## References
 - https://medium.com/greyatom/decision-trees-a-simple-way-to-visualize-a-decision-dc506a403aeb
