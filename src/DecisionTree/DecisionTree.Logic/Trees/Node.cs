@@ -110,14 +110,10 @@ namespace DecisionTree.Logic.Trees
                     TotalEntropy = TotalEntropy,
                 };
 
-                // TODO: take care of correct placing NodeEntropy
-                // What happens with subFeatureEntropy? -> subfeatureEntropy != NodeEntropy
                 NodeEntropy = feature.FeatureEntropy;
                 NodeInformationGain = feature.FeatureInformationGain;
 
                 var currentData = data.Filter(feature.Name, distinctValue);
-                // calculate current classification (from current data set calculate how many times each distinct resultValue occurs)
-                // If feature selected, the subset of csvdata should not contain the actual feature in header anymore.
                 node.Build(currentData);
                 this.Children.Add(distinctValue, node);
             }
@@ -162,14 +158,14 @@ namespace DecisionTree.Logic.Trees
             var informationGainOfFeatures = CalculateInformationGainOfFeatures(data).ToList();
 
             // We have to calculate for each feature the IG and then select MAX(FeatureIG).
-            var (featureName, featureEntropy, featureIG) = SelectFeatureForSplit(informationGainOfFeatures);
+            var (featureName, featureEntropy, featureIg) = SelectFeatureForSplit(informationGainOfFeatures);
             var toSelectFeatureValues = data.Columns[featureName];
             var feature = new Feature()
             {
                 Name = featureName,
                 Values = toSelectFeatureValues,
                 FeatureEntropy = featureEntropy,
-                FeatureInformationGain = featureIG
+                FeatureInformationGain = featureIg
             };
 
             return feature;
@@ -180,7 +176,7 @@ namespace DecisionTree.Logic.Trees
         /// </summary>
         /// <param name="data">The data.</param>
         /// <returns>Returns a list containing information of the feature name with its entropy and information gain.</returns>
-        private IEnumerable<(string featureName, double featureEntropy, double featureIG)> CalculateInformationGainOfFeatures(CsvData data)
+        private IEnumerable<(string featureName, double featureEntropy, double featureIg)> CalculateInformationGainOfFeatures(CsvData data)
         {
             var informationGainOfFeatures = new List<(string, double, double)>();
 
@@ -257,13 +253,13 @@ namespace DecisionTree.Logic.Trees
         /// </summary>
         /// <param name="informationGainOfFeatures">The features with the information gain.</param>
         /// <returns>Returns the feature with the maximum information gain.</returns>
-        private (string featureName, double featureEntropy, double featureIG) SelectFeatureForSplit(
-            IReadOnlyCollection<(string featureName, double featureEntropy, double featureIG)> informationGainOfFeatures)
+        private (string featureName, double featureEntropy, double featureIg) SelectFeatureForSplit(
+            IReadOnlyCollection<(string featureName, double featureEntropy, double featureIg)> informationGainOfFeatures)
         {
             // Select MAX(FeatureIG) of IG collection.
             // If n elements have the same highest IG, then select first occurence of it.
-            var toSelectFeature = informationGainOfFeatures.Max(x => x.featureIG);
-            return informationGainOfFeatures.First(x => x.featureIG == toSelectFeature);
+            var toSelectFeature = informationGainOfFeatures.Max(x => x.featureIg);
+            return informationGainOfFeatures.First(x => x.featureIg == toSelectFeature);
         }
     }
 }
