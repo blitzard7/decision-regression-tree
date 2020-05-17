@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace DecisionTree.Logic.Exceptions
 {
     /// <summary>
-    /// Represents the InvalidFileExtensionException class.
+    /// Represents the FeatureNotFoundException class.
     /// </summary>
     [Serializable]
     public class FeatureNotFoundException : Exception

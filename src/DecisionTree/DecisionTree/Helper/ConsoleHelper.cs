@@ -5,7 +5,7 @@ namespace DecisionTree.Helper
     /// <summary>
     /// Represents the ConsoleHelper class.
     /// </summary>
-    public static class ConsoleHelper
+    public class ConsoleHelper
     {
         /// <summary>
         /// Writes the given input with the given color and appends a new line.

@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace DecisionTree.Logic.Exceptions
 {
     /// <summary>
-    /// Represents the CsvDataInvalidMetadataException class.
+    /// Represents the CsvRowFormatInvalidException class.
     /// </summary>
     [Serializable]
     public class CsvRowFormatInvalidException : Exception

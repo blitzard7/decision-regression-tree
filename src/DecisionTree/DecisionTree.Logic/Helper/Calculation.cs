@@ -7,7 +7,7 @@ namespace DecisionTree.Logic.Helper
     /// <summary>
     /// Represents the Calculation class.
     /// </summary>
-    public static class Calculation
+    public class Calculation
     {
         /// <summary>
         /// Calculates the entropy.
