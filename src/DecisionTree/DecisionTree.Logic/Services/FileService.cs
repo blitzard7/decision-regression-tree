@@ -34,7 +34,7 @@ namespace DecisionTree.Logic.Services
         /// <returns>Returns tha path where the file has been exported.</returns>
         public string Export(string columns, IEnumerable<string> rows, string path)
         {
-            string exportPath = string.Empty;
+            string exportPath;
             var lines = new List<string>
             {
                 columns,
@@ -55,6 +55,11 @@ namespace DecisionTree.Logic.Services
             return exportPath;
         }
 
+        /// <summary>
+        /// Checks if the given path points to a directory.
+        /// </summary>
+        /// <param name="path">The path.</param>
+        /// <returns>Returns a value indicating whether the path points to a directory or not.</returns>
         private bool CheckIfPathIsDirectory(string path)
         {
             var fileAttribute = File.GetAttributes(path);

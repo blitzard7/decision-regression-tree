@@ -12,7 +12,7 @@ namespace DecisionTree.Logic.Tests
             // Arrange
             var csvData = new CsvData();
             var columns = new Dictionary<string, List<string>>();
-            var outlook = "Outlook";
+            const string outlook = "Outlook";
             var outlookData = new List<string>
             {
                 "Sunny",
@@ -22,7 +22,7 @@ namespace DecisionTree.Logic.Tests
                 "Outlook",
                 "Windy"
             };
-            var humidity = "Humidity";
+            const string humidity = "Humidity";
             var humidityData = new List<string>
             {
                 "high",
@@ -32,7 +32,7 @@ namespace DecisionTree.Logic.Tests
                 "high",
                 "normal"
             };
-            var needUmbrella = "NeedUmbrella";
+            const string needUmbrella = "NeedUmbrella";
             var needUmbrellaData = new List<string>
             {
                 "Yes",

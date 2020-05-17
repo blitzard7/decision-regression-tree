@@ -21,13 +21,13 @@ namespace DecisionTree.Logic.Tests
             var expected = new List<string>()
             {
                 "Outlook",
-                "Temperatur",
+                "Temperature",
                 "Humidity",
                 "Wind",
                 "NeedUmbrella"
             };
 
-            var file = @"Outlook;Temperatur;Humidity;Wind;NeedUmbrella;";
+            var file = @"Outlook;Temperature;Humidity;Wind;NeedUmbrella;";
 
             // Act 
             var header = csvService.GetHeaderInformation(file).ToList();
@@ -61,7 +61,7 @@ namespace DecisionTree.Logic.Tests
                 "sunny;hot;high;weak;yes;"
             };
 
-            var input = "Sunny;Hot;High;Weak;Yes;";
+            const string input = "Sunny;Hot;High;Weak;Yes;";
 
             // Act 
             var data = csvService.GetRowValues(input);
@@ -77,7 +77,7 @@ namespace DecisionTree.Logic.Tests
             var formValidatorMock = new Mock<IFormValidator>();
             formValidatorMock.Setup(x => x.IsRowFormatValid(It.IsAny<string[]>())).Returns(false);
             var csvService = new CsvService(formValidatorMock.Object);
-            string[] metaInformation = new string[0];
+            var metaInformation = new string[0];
 
             // Act & Assert
             Assert.Throws<IndexOutOfRangeException>(() =>
@@ -87,13 +87,13 @@ namespace DecisionTree.Logic.Tests
         }
 
         [Fact]
-        public void CreateColumns_ShouldThrowIndexOutOfRangeExceptionWhenOneElementyMetaInformationIsGiven()
+        public void CreateColumns_ShouldThrowIndexOutOfRangeExceptionWhenOneElementMetaInformationIsGiven()
         {
             // Arrange
             var formValidatorMock = new Mock<IFormValidator>();
             formValidatorMock.Setup(x => x.IsRowFormatValid(It.IsAny<string[]>())).Returns(false);
             var csvService = new CsvService(formValidatorMock.Object);
-            string[] metaInformation = new string[1] { "test" };
+            var metaInformation = new string[1] { "test" };
 
             // Act & Assert
             Assert.Throws<IndexOutOfRangeException>(() =>
@@ -125,7 +125,7 @@ namespace DecisionTree.Logic.Tests
             var formValidatorMock = new Mock<IFormValidator>();
             formValidatorMock.Setup(x => x.IsRowFormatValid(It.IsAny<string[]>())).Returns(false);
             var csvService = new CsvService(formValidatorMock.Object);
-            string[] metaInformation = new string[2] { "asdf,asdf,asdf", "1,2,3,4" };
+            var metaInformation = new string[2] { "asdf,asdf,asdf", "1,2,3,4" };
 
             // Act && Assert
             Assert.Throws<CsvRowFormatInvalidException>(() =>
@@ -141,7 +141,7 @@ namespace DecisionTree.Logic.Tests
             var formValidatorMock = new Mock<IFormValidator>();
             formValidatorMock.Setup(x => x.IsRowFormatValid(It.IsAny<string[]>())).Returns(false);
             var csvService = new CsvService(formValidatorMock.Object);
-            string[] metaInformation = new string[2] { "col1;col2;col3", "1,2,3,4" };
+            var metaInformation = new string[2] { "col1;col2;col3", "1,2,3,4" };
 
             // Act && Assert
             Assert.Throws<CsvRowFormatInvalidException>(() =>
@@ -157,7 +157,7 @@ namespace DecisionTree.Logic.Tests
             var formValidatorMock = new Mock<IFormValidator>();
             formValidatorMock.Setup(x => x.IsRowFormatValid(It.IsAny<string[]>())).Returns(true);
             var csvService = new CsvService(formValidatorMock.Object);
-            string[] metaInformation = new string[2] { "col1;col2;col3", "1;2;3;4" };
+            var metaInformation = new string[2] { "col1;col2;col3", "1;2;3;4" };
 
             // Act 
             var columns = csvService.CreateColumns(metaInformation);

@@ -130,6 +130,11 @@ namespace DecisionTree.Logic.Services
             return columns;
         }
 
+        /// <summary>
+        /// Splits the header values from the row values at the Data-tag.
+        /// </summary>
+        /// <param name="fileContent">The file content.</param>
+        /// <returns>Returns the split file content at the Data tag.</returns>
         private IEnumerable<string> SplitMetaDataInformationFromRawFileContent(string fileContent)
         {
             var rawMetaData = fileContent.Split(FormValidator.ValidDataSeparator);

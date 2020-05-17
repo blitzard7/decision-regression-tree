@@ -13,7 +13,7 @@ namespace DecisionTree.Logic.Tests
         {
             // Arrange 
             var formValidator = new FormValidator();
-            var input = TestData.TestCsvInvalidContentDataMissing;
+            const string input = TestData.TestCsvInvalidContentDataMissing;
 
             // Act 
             var isDataPresent = formValidator.IsDataTagPresent(input);
@@ -27,7 +27,7 @@ namespace DecisionTree.Logic.Tests
         {
             // Arrange 
             var formValidator = new FormValidator();
-            var input = TestData.TestCsvContent;
+            const string input = TestData.TestCsvContent;
 
             // Act 
             var isDataPresent = formValidator.IsDataTagPresent(input);
@@ -135,7 +135,7 @@ namespace DecisionTree.Logic.Tests
         {
             // Arrange 
             var formValidator = new FormValidator();
-            var columns = "col1;col2;col3;col4";
+            const string columns = "col1;col2;col3;col4";
 
             // Act
             var isColumnFormatValid = formValidator.IsColumnFormatValid(columns);

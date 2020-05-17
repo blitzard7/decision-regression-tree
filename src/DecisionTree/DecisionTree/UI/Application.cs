@@ -81,7 +81,6 @@ namespace DecisionTree.UI
             DrawInterface();
             while (_isRunning)
             {
-                // Display UserInterface and handle interaction
                 var userInput = Console.ReadKey(true);
                 HandleUserInput(userInput);
             }
@@ -238,12 +237,8 @@ namespace DecisionTree.UI
         /// </summary>
         private void ExportData()
         {
-            // user can add columns and rows including resultset 
-            // this should be then exported as csvfile (accordingly to provided format) and user can (if he/she wants to) import it later.
             var columns = GetColumnInformationForExport();
             var rows = GetRowInformationForExport();
-
-            // Todo check input
             var isGivenDataValid = CheckExportDataForValidity(columns, rows);
 
             if (!isGivenDataValid)
@@ -283,7 +278,7 @@ namespace DecisionTree.UI
         /// <returns>Returns the retrieved column information.</returns>
         private string GetColumnInformationForExport()
         {
-            ConsoleHelper.Write("Please enter your column name semi-colon \";\" separated: ");
+            ConsoleHelper.Write("Please enter header names semi-colon \";\" separated: ");
             var input = Console.ReadLine();
 
             return input;
@@ -343,11 +338,9 @@ namespace DecisionTree.UI
             {
                 var current = headers[i];
 
-                // Todo display possible values for current column?
                 Console.WriteLine($"Enter search value for feature {current.ToUpper()}: ");
                 var searchInput = Console.ReadLine();
 
-                // todo validate input
                 searchKeys.Add(current, searchInput);
             }
 
@@ -401,9 +394,6 @@ namespace DecisionTree.UI
         /// <param name="indent">The indent of the current tree node.</param>
         private void PrintTree(INode tree, string indent)
         {
-            // if it is a Feature Category (ColumnName) then represent it as UpperCase.
-            // features could be colorized 
-            // leaves could be colorized
             string feature = null;
             if (tree.Feature != null)
             {
@@ -419,7 +409,6 @@ namespace DecisionTree.UI
 
             Console.WriteLine(indent + "+- " + name);
 
-            // if children, if node
             var indentCondition = tree.Parent != null && !tree.IsLeaf;
             indent += indentCondition ? "|  " : "   ";
 
@@ -437,23 +426,23 @@ namespace DecisionTree.UI
         {
             ConsoleHelper.WriteLine("Csv Schema", ConsoleColor.Cyan);
             ConsoleHelper.WriteLine("==========", ConsoleColor.Cyan);
-            ConsoleHelper.WriteLine("Columns and Rows are separated by a \"Data\" tag.");
-            ConsoleHelper.WriteLine("Without that \"Data\" tag the import will fail.\r\n");
-            ConsoleHelper.Write("Columns: are separated by \";\"");
-            ConsoleHelper.Write("Rows: are separated by \";\"");
+            ConsoleHelper.WriteLine("Headers and Rows are separated by a \"Data\" tag.");
+            ConsoleHelper.WriteLine("Without that \"Data\" tag the import will fail.");
+            ConsoleHelper.WriteLine("Headers: are separated by \";\"");
+            ConsoleHelper.WriteLine("Rows: are separated by \";\"");
             ConsoleHelper.WriteLine("Example:");
             ConsoleHelper.WriteLine("Col1;Col2;Col3;\r\nData\r\nrow1;row2;row3;\r\n");
             ConsoleHelper.WriteLine("Export Data", ConsoleColor.Cyan);
             ConsoleHelper.WriteLine("===========", ConsoleColor.Cyan);
-            ConsoleHelper.WriteLine("You can enter your column and row values into the console.");
-            ConsoleHelper.WriteLine("Make sure your column and row values are separated with \";\".");
-            ConsoleHelper.WriteLine("When exporting data, there is no need to separate columns and rows with the \"Data\" tag.");
+            ConsoleHelper.WriteLine("You can enter your header and row values into the console.");
+            ConsoleHelper.WriteLine("Make sure your header and row values are separated with \";\".");
+            ConsoleHelper.WriteLine("When exporting data, there is no need to separate header and rows with the \"Data\" tag.");
             ConsoleHelper.WriteLine("The \"Data\" tag will automatically be inserted when exporting to csv.\r\n");
             ConsoleHelper.WriteLine("Tree Visualization", ConsoleColor.Cyan);
             ConsoleHelper.WriteLine("==================", ConsoleColor.Cyan);
             ConsoleHelper.WriteLine("Tree Nodes: are represented in uppercase.");
-            ConsoleHelper.WriteLine("Tree Edges: are represented in lowercase.");
-            ConsoleHelper.WriteLine("Leaves: are represented in lowercase.");
+            ConsoleHelper.WriteLine("Tree Nodes are demonstrated as [feature-value] -> [FEATURE] or [FEATURE] if it is the root node.");
+            ConsoleHelper.WriteLine("Leaves: are demonstrated as [feature-value] -> [result]");
             ConsoleHelper.WriteLine("The parent node wraps all child elements inside the \"|\"");
             ConsoleHelper.WriteLine("Node children are represented indented of the parent node.");
             ConsoleHelper.WriteLine("Example:");

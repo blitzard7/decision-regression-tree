@@ -12,7 +12,7 @@ namespace DecisionTree.Logic.Tests
             // Arrange
             var csvData = new CsvData();
             var columns = new Dictionary<string, List<string>>();
-            var key = "Outlook";
+            const string key = "Outlook";
             var columnData = new List<string>
             {
                 "Sunny",
@@ -39,7 +39,7 @@ namespace DecisionTree.Logic.Tests
             // Arrange
             var csvData = new CsvData();
             var columns = new Dictionary<string, List<string>>();
-            var key = "Outlook";
+            const string key = "Outlook";
             var columnData = new List<string>
             {
                 "Sunny",
@@ -66,7 +66,7 @@ namespace DecisionTree.Logic.Tests
             // Arrange
             var csvData = new CsvData();
             var columns = new Dictionary<string, List<string>>();
-            var outlook = "Outlook";
+            const string outlook = "Outlook";
             var outlookData = new List<string>
             {
                 "Sunny",
@@ -76,8 +76,8 @@ namespace DecisionTree.Logic.Tests
                 "Outlook",
                 "Windy"
             };
-            var temperatur = "Temperatur";
-            var temperaturData = new List<string>
+            const string temperature = "Temperature";
+            var temperatureData = new List<string>
             {
                 "Hot",
                 "Cold",
@@ -102,7 +102,7 @@ namespace DecisionTree.Logic.Tests
             };
 
             columns.Add(outlook, outlookData);
-            columns.Add(temperatur, temperaturData);
+            columns.Add(temperature, temperatureData);
             csvData.Columns = columns;
             csvData.Rows.AddRange(rows);
 
@@ -119,7 +119,7 @@ namespace DecisionTree.Logic.Tests
             // Arrange
             var csvData = new CsvData();
             var columns = new Dictionary<string, List<string>>();
-            var outlook = "Outlook";
+            const string outlook = "Outlook";
             var outlookData = new List<string>
             {
                 "Sunny",
@@ -129,8 +129,8 @@ namespace DecisionTree.Logic.Tests
                 "Outlook",
                 "Windy"
             };
-            var temperatur = "Temperatur";
-            var temperaturData = new List<string>
+            const string temperature = "Temperature";
+            var temperatureData = new List<string>
             {
                 "Hot",
                 "Cold",
@@ -150,7 +150,7 @@ namespace DecisionTree.Logic.Tests
             };
 
             columns.Add(outlook, outlookData);
-            columns.Add(temperatur, temperaturData);
+            columns.Add(temperature, temperatureData);
             csvData.Columns = columns;
             csvData.Rows.AddRange(rows);
 

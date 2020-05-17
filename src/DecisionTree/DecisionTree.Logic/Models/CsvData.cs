@@ -59,14 +59,12 @@ namespace DecisionTree.Logic.Models
         /// <returns>Returns a subset of the csv data.</returns>
         public CsvData Filter(string featureName, string distinctValue)
         {
-            // collect row data for given distinctValue.
-            var columns = new Dictionary<string, List<string>>();
-
-            // 1. collect headers where x != featurename
+            // 1. collect headers where x != featureName
             // 2. collect all rows containing distinctValue
-            // 3. create subset containing relevant headers with corresponing rows 
+            // 3. create subset containing relevant headers with corresponding rows 
             //  rows should not contain distinctValue
-
+            
+            var columns = new Dictionary<string, List<string>>();
             var featureIndex = this.Headers.IndexOf(featureName);
             var headers = TakeColumnsExcludingCurrentFeature(featureName);
 
@@ -121,6 +119,14 @@ namespace DecisionTree.Logic.Models
             return tmpHeaders;
         }
 
+        /// <summary>
+        /// Takes relevant rows from the current distinct feature value.
+        /// The subset of the selected rows should not contain the distinct feature values.
+        /// </summary>
+        /// <param name="rows">The rows.</param>
+        /// <param name="featureIndex">The feature index.</param>
+        /// <param name="distinctValue">The distinct feature value.</param>
+        /// <returns>Returns a subset of the rows containing the rows from the feature index excluding the distinct feature value.</returns>
         private List<string> TakeRelevantRowsFromCurrentFeature(IEnumerable<string> rows, int featureIndex, string distinctValue)
         {
             var relevantRows = new List<string>();
