@@ -431,7 +431,7 @@ namespace DecisionTree.UI
             ConsoleHelper.WriteLine("Headers: are separated by \";\"");
             ConsoleHelper.WriteLine("Rows: are separated by \";\"");
             ConsoleHelper.WriteLine("Example:");
-            ConsoleHelper.WriteLine("Col1;Col2;Col3;\r\nData\r\nrow1;row2;row3;\r\n");
+            ConsoleHelper.WriteLine("Col1;Col2;Col3\r\nData\r\nrow1;row2;row3\r\n");
             ConsoleHelper.WriteLine("Export Data", ConsoleColor.Cyan);
             ConsoleHelper.WriteLine("===========", ConsoleColor.Cyan);
             ConsoleHelper.WriteLine("You can enter your header and row values into the console.");
