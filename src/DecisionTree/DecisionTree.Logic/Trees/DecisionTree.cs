@@ -45,16 +45,16 @@ namespace DecisionTree.Logic.Trees
 
             while (!tempNode.IsLeaf)
             {
-                var mySearchThingy = tempNode.Feature;
+                var searchFeature = tempNode.Feature;
                 
-                if (!searchKeys.TryGetValue(mySearchThingy, out var myChildKeyThingy))
+                if (!searchKeys.TryGetValue(searchFeature, out var searchFeatureValue))
                 {
-                    throw new InvalidOperationException($"No value for feature {mySearchThingy} have been provided.");
+                    throw new InvalidOperationException($"No value for feature {searchFeature} have been provided.");
                 }
 
-                if (!tempNode.Children.TryGetValue(myChildKeyThingy, out var tmpChildNode))
+                if (!tempNode.Children.TryGetValue(searchFeatureValue, out var tmpChildNode))
                 {
-                    throw new FeatureNotFoundException($"Getting child node by querying tree with key {myChildKeyThingy} did not result in any node.");
+                    throw new FeatureNotFoundException($"Getting child node by querying tree with key {searchFeatureValue} did not result in any node.");
                 }
 
                 tempNode = tmpChildNode;
