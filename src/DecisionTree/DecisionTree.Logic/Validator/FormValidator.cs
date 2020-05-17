@@ -120,8 +120,6 @@ namespace DecisionTree.Logic.Validator
         public bool IsRowFormatValid(string row)
         {
             var data = row.Split(ValidValueSeparator, StringSplitOptions.RemoveEmptyEntries);
-
-            // what happens when there is only 1 column and 1 row?
             return data.Length > 0 && !data[0].Equals(row);
         }
     }
