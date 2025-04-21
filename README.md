@@ -131,7 +131,6 @@ This is a **prototype**, so it's not production-ready—just a hands-on implemen
 | Regression Tree        | ❌ Not implemented |
 | Console Interface      | ✅ Done            |
 | Tree Visualization     | ✅ Basic console view |
-| Real Data Testing      | ✅ Verified        |
 | Import/Export          | ✅ Supported       |
 | Clean Documentation    | ✅ Included        |
 
