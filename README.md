@@ -7,6 +7,8 @@ This project was developed during my **Master's program in Software Architecture
 
 The goal was to gain practical experience implementing machine learning models and understanding decision-making logic through code. The result is a console-based tool with features for importing/exporting data, querying a decision tree, and visualizing the results—all built around a lightweight, testable architecture.
 
+Now, a few years later, I’ve decided to revisit and continue working on this project—improving the decision tree implementation and extending it to support regression trees as well.
+
 ---
 
 ## What's Inside
