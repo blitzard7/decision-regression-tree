@@ -4,9 +4,6 @@ using DecisionTree.Logic.Models;
 
 namespace DecisionTree.Logic
 {
-    /// <summary>
-    /// Represents the Extensions class.
-    /// </summary>
     public static class Extension
     {
         /// <summary>

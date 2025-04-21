@@ -16,7 +16,7 @@ namespace DecisionTree.Logic.Tests
             const string input = TestData.TestCsvInvalidContentDataMissing;
 
             // Act 
-            var isDataPresent = formValidator.IsDataTagPresent(input);
+            var isDataPresent = formValidator.ContainsDataTag(input);
 
             // Assert
             Assert.False(isDataPresent);
@@ -30,7 +30,7 @@ namespace DecisionTree.Logic.Tests
             const string input = TestData.TestCsvContent;
 
             // Act 
-            var isDataPresent = formValidator.IsDataTagPresent(input);
+            var isDataPresent = formValidator.ContainsDataTag(input);
 
             // Assert
             Assert.True(isDataPresent);
@@ -46,7 +46,7 @@ namespace DecisionTree.Logic.Tests
             var formValidator = new FormValidator();
 
             // Act
-            var isHeaderPresent = formValidator.IsHeaderPresent(input);
+            var isHeaderPresent = formValidator.ContainsHeader(input);
 
             // Assert
             Assert.False(isHeaderPresent);
@@ -61,7 +61,7 @@ namespace DecisionTree.Logic.Tests
             var formValidator = new FormValidator();
 
             // Act
-            var isHeaderPresent = formValidator.IsHeaderPresent(input);
+            var isHeaderPresent = formValidator.ContainsHeader(input);
 
             // Assert
             Assert.True(isHeaderPresent);
@@ -77,7 +77,7 @@ namespace DecisionTree.Logic.Tests
             var formValidator = new FormValidator();
 
             // Act
-            var isMetaInformationValid = formValidator.IsMetaInformationFormatValid(input);
+            var isMetaInformationValid = formValidator.IsMetaInformationValid(input);
 
             // Assert
             Assert.False(isMetaInformationValid);
@@ -124,7 +124,7 @@ namespace DecisionTree.Logic.Tests
             var formValidator = new FormValidator();
 
             // Act
-            var isColumnFormatValid = formValidator.IsColumnFormatValid(columns);
+            var isColumnFormatValid = formValidator.IsColumnStructureValid(columns);
 
             // Assert
             Assert.False(isColumnFormatValid);
@@ -138,7 +138,7 @@ namespace DecisionTree.Logic.Tests
             const string columns = "col1;col2;col3;col4";
 
             // Act
-            var isColumnFormatValid = formValidator.IsColumnFormatValid(columns);
+            var isColumnFormatValid = formValidator.IsColumnStructureValid(columns);
 
             // Assert
             Assert.False(isColumnFormatValid);
@@ -166,7 +166,7 @@ namespace DecisionTree.Logic.Tests
             };
 
             // Act
-            var amountSame = formValidator.AreAmountOfRowValuesWithColumnEntriesEqual(columns, rows);
+            var amountSame = formValidator.AreRowValuesAlignedWithColumns(columns, rows);
 
             // Assert
             Assert.False(amountSame);
@@ -194,7 +194,7 @@ namespace DecisionTree.Logic.Tests
             };
 
             // Act
-            var amountSame = formValidator.AreAmountOfRowValuesWithColumnEntriesEqual(columns, rows);
+            var amountSame = formValidator.AreRowValuesAlignedWithColumns(columns, rows);
 
             // Assert
             Assert.True(amountSame);
@@ -210,7 +210,7 @@ namespace DecisionTree.Logic.Tests
             var formValidator = new FormValidator();
 
             // Act 
-            var isDataSeparatedCorrectly = formValidator.IsRowDataSeparatedCorrectly(data);
+            var isDataSeparatedCorrectly = formValidator.IsRowDataDelimiterValid(data);
 
             // Assert
             Assert.False(isDataSeparatedCorrectly);
@@ -225,7 +225,7 @@ namespace DecisionTree.Logic.Tests
             var formValidator = new FormValidator();
 
             // Act 
-            var isDataSeparatedCorrectly = formValidator.IsRowDataSeparatedCorrectly(data);
+            var isDataSeparatedCorrectly = formValidator.IsRowDataDelimiterValid(data);
 
             // Assert
             Assert.True(isDataSeparatedCorrectly);

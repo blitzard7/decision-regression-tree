@@ -6,14 +6,8 @@ using DecisionTree.Logic.Models;
 
 namespace DecisionTree.Logic.Trees
 {
-    /// <summary>
-    /// Represents the DecisionTree class.
-    /// </summary>
     public class DecisionTree : IDecisionTree
     {
-        /// <summary>
-        /// Gets or sets the root node.
-        /// </summary>
         public INode Root { get; set; }
 
         /// <summary>

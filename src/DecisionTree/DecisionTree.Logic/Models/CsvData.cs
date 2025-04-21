@@ -6,14 +6,8 @@ using System.Linq;
 
 namespace DecisionTree.Logic.Models
 {
-    /// <summary>
-    /// Represents the CsvData class.
-    /// </summary>
     public class CsvData
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CsvData"/> class.
-        /// </summary>
         public CsvData()
         {
             Columns = new Dictionary<string, List<string>>();
@@ -21,19 +15,10 @@ namespace DecisionTree.Logic.Models
             Headers = new List<string>();
         }
 
-        /// <summary>
-        /// Gets or sets the columns.
-        /// </summary>
         public Dictionary<string, List<string>> Columns { get; set; }
 
-        /// <summary>
-        /// Gets or sets the rows.
-        /// </summary>
         public List<string> Rows { get; set; }
 
-        /// <summary>
-        /// Gets or sets the headers, which are represented as column names.
-        /// </summary>
         public List<string> Headers { get; set; }
 
         /// <summary>
@@ -41,15 +26,12 @@ namespace DecisionTree.Logic.Models
         /// </summary>
         public List<string> ResultSetValues => GetResultSetValues();
 
-        /// <summary>
-        /// Gets the result category.
-        /// </summary>
         public string ResultCategory => Headers.Count > 0 ? Headers[^1] : string.Empty;
 
         /// <summary>
         /// Gets the entropy of the table.
         /// </summary>
-        public double Eg => CalculateEntropyOfTable();
+        public double TableEntropy => CalculateEntropyOfTable();
 
         /// <summary>
         /// Filters the current csv data according to the requested feature and its distinct value.
@@ -59,16 +41,16 @@ namespace DecisionTree.Logic.Models
         /// <returns>Returns a subset of the csv data.</returns>
         public CsvData Filter(string featureName, string distinctValue)
         {
-            // 1. collect headers where x != featureName
+            // 1. collect headers where header != featureName
             // 2. collect all rows containing distinctValue
             // 3. create subset containing relevant headers with corresponding rows 
             //  rows should not contain distinctValue
             
             var columns = new Dictionary<string, List<string>>();
             var featureIndex = this.Headers.IndexOf(featureName);
-            var headers = TakeColumnsExcludingCurrentFeature(featureName);
+            var headers = ExtractHeadersWithoutFeature(featureName);
 
-            var relevantRows = TakeRelevantRowsFromCurrentFeature(this.Rows, featureIndex, distinctValue);
+            var relevantRows = ExtractRelevantRowsByFeatureValue(this.Rows, featureIndex, distinctValue);
 
             foreach (var header in headers)
             {
@@ -87,31 +69,20 @@ namespace DecisionTree.Logic.Models
             return dataSubSet;
         }
 
-        /// <summary>
-        /// Calculates the entropy of the table.
-        /// </summary>
-        /// <returns>Returns the entropy.</returns>
         private double CalculateEntropyOfTable()
         {
             var distinctResultValues = this.GetUniqueColumnValues(ResultCategory).ToList();
             return Calculation.CalculateEntropy(distinctResultValues, ResultSetValues);
         }
 
-        /// <summary>
-        /// Gets the result set values.
-        /// </summary>
-        /// <returns>Returns the result set values.</returns>
-        private List<string> GetResultSetValues()
-        {
-            return Columns[ResultCategory];
-        }
+        private List<string> GetResultSetValues() => Columns[ResultCategory];  
 
         /// <summary>
         /// Take columns without the current requested feature.
         /// </summary>
         /// <param name="feature">The requested feature.</param>
         /// <returns>Returns the column names excluding the requested feature.</returns>
-        private List<string> TakeColumnsExcludingCurrentFeature(string feature)
+        private List<string> ExtractHeadersWithoutFeature(string feature)
         {
             var tmpHeaders = new List<string>();
             tmpHeaders.AddRange(Headers);
@@ -127,7 +98,7 @@ namespace DecisionTree.Logic.Models
         /// <param name="featureIndex">The feature index.</param>
         /// <param name="distinctValue">The distinct feature value.</param>
         /// <returns>Returns a subset of the rows containing the rows from the feature index excluding the distinct feature value.</returns>
-        private List<string> TakeRelevantRowsFromCurrentFeature(IEnumerable<string> rows, int featureIndex, string distinctValue)
+        private List<string> ExtractRelevantRowsByFeatureValue(IEnumerable<string> rows, int featureIndex, string distinctValue)
         {
             var relevantRows = new List<string>();
 
@@ -157,7 +128,6 @@ namespace DecisionTree.Logic.Models
         {
             return rows.Select(x =>
             {
-
                 var split = x.Split(FormValidator.ValidValueSeparator, StringSplitOptions.RemoveEmptyEntries);
                 var selected = split[headerIndex];
                 return selected;

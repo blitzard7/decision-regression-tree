@@ -3,49 +3,22 @@ using DecisionTree.Logic.Models;
 
 namespace DecisionTree.Logic.Interfaces
 {
-    /// <summary>
-    /// Represents the INode interface.
-    /// </summary>
     public interface INode
     {
-        /// <summary>
-        /// Gets or sets the parent.
-        /// </summary>
         INode Parent { get; set; }
 
-        /// <summary>
-        /// Gets a value indicating whether the node is leaf or not.
-        /// </summary>
         bool IsLeaf { get; }
 
-        /// <summary>
-        /// Gets the feature name.
-        /// </summary>
         string Feature { get; }
 
-        /// <summary>
-        /// Gets the value of the current feature.
-        /// </summary>
         string FeatureValue { get; }
 
-        /// <summary>
-        /// Gets the total entropy.
-        /// </summary>
         double TotalEntropy { get; }
 
-        /// <summary>
-        /// Gets the node entropy.
-        /// </summary>
         double NodeEntropy { get; }
 
-        /// <summary>
-        /// Gets the information gain of the node.
-        /// </summary>
         double NodeInformationGain { get; }
 
-        /// <summary>
-        /// Gets the result value.
-        /// </summary>
         string Result { get; }
 
         /// <summary>

@@ -7,28 +7,16 @@ using System.Linq;
 
 namespace DecisionTree.Logic.Trees
 {
-    /// <summary>
-    /// Represents the Node class.
-    /// </summary>
     public class Node : INode
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Node"/> class.
-        /// </summary>
         public Node()
         {
             Children = new Dictionary<string, INode>();
             CurrentClassification = new Dictionary<string, int>();
         }
 
-        /// <summary>
-        /// Gets or sets the feature name.
-        /// </summary>
         public string Feature { get; set; }
 
-        /// <summary>
-        /// Gets or sets the parent.
-        /// </summary>
         public INode Parent { get; set; }
 
         /// <summary>
@@ -37,13 +25,10 @@ namespace DecisionTree.Logic.Trees
         public Dictionary<string, INode> Children { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the node is leaf or not.
+        /// Gets a value indicating whether the node is leaf or not.
         /// </summary>
         public bool IsLeaf => Children.Values.Count == 0;
 
-        /// <summary>
-        /// Gets or sets the result value.
-        /// </summary>
         public string Result { get; set; }
 
         /// <summary>
@@ -51,33 +36,17 @@ namespace DecisionTree.Logic.Trees
         /// </summary>
         public Dictionary<string, int> CurrentClassification { get; set; }
 
-        /// <summary>
-        /// Gets or sets the node entropy.
-        /// </summary>
         public double NodeEntropy { get; private set; }
 
-        /// <summary>
-        /// Gets or sets the information gain of the node.
-        /// </summary>
         public double NodeInformationGain { get; private set; }
 
-        /// <summary>
-        /// Gets or sets the total entropy.
-        /// </summary>
         public double TotalEntropy { get; private set; }
 
-        /// <summary>
-        /// Gets or sets the value of the current feature.
-        /// </summary>
         public string FeatureValue { get; private set; }
 
-        /// <summary>
-        /// Starts calculating the tree.
-        /// </summary>
-        /// <param name="data">The input data.</param>
         public void Start(CsvData data)
         {
-            TotalEntropy = data.Eg;
+            TotalEntropy = data.TableEntropy;
             Build(data);
         }
 

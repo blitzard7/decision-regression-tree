@@ -310,8 +310,8 @@ namespace DecisionTree.UI
         /// <returns>Returns a value indicating whether the data for export is valid or not.</returns>
         private bool CheckExportDataForValidity(string columns, List<string> rows)
         {
-            var columnsSeparatedCorrectly = _formValidator.IsRowDataSeparatedCorrectly(columns);
-            var rowsSeparatedCorrectly = rows.All(x => _formValidator.IsRowDataSeparatedCorrectly(x));
+            var columnsSeparatedCorrectly = _formValidator.IsRowDataDelimiterValid(columns);
+            var rowsSeparatedCorrectly = rows.All(x => _formValidator.IsRowDataDelimiterValid(x));
             var rowsFormatValid = _formValidator.IsRowFormatValid(rows.ToArray());
 
             return columnsSeparatedCorrectly && rowsSeparatedCorrectly && rowsFormatValid;

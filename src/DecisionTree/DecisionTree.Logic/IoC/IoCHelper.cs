@@ -5,9 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DecisionTree.Logic.IoC
 {
-    /// <summary>
-    /// Represents the IoCHelper class.
-    /// </summary>
     public class IoCHelper
     {
         /// <summary>

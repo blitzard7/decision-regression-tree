@@ -2,9 +2,6 @@
 
 namespace DecisionTree.Logic.Interfaces
 {
-    /// <summary>
-    /// Represents the IFileService interface.
-    /// </summary>
     public interface IFileService
     {
         /// <summary>

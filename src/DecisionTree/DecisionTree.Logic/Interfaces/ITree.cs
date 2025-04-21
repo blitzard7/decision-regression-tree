@@ -3,14 +3,8 @@ using DecisionTree.Logic.Models;
 
 namespace DecisionTree.Logic.Interfaces
 {
-    /// <summary>
-    /// Represents the ITree node.
-    /// </summary>
     public interface ITree
     {
-        /// <summary>
-        /// Gets the root node.
-        /// </summary>
         INode Root { get; }
 
         /// <summary>

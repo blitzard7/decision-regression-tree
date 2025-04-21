@@ -3,9 +3,6 @@ using DecisionTree.Logic.Models;
 
 namespace DecisionTree.Logic.Interfaces
 {
-    /// <summary>
-    /// Represents the ICsvService.
-    /// </summary>
     public interface ICsvService
     {
         /// <summary>

@@ -13,42 +13,42 @@ namespace DecisionTree.Logic.Interfaces
         /// <param name="column">The columns.</param>
         /// <param name="rows">The row values.</param>
         /// <returns>Returns a value indicating whether the amount of columns and row values are equal or not.</returns>
-        bool AreAmountOfRowValuesWithColumnEntriesEqual(IEnumerable<string> column, IEnumerable<string> rows);
+        bool AreRowValuesAlignedWithColumns(IEnumerable<string> column, IEnumerable<string> rows);
 
         /// <summary>
         /// Checks whether the column format of the given input is valid.
         /// </summary>
         /// <param name="input">The input.</param>
         /// <returns>Returns a value whether the input contains a valid column format.</returns>
-        bool IsColumnFormatValid(string input);
+        bool IsColumnStructureValid(string input);
 
         /// <summary>
         /// Checks whether the Data tag is present in the input.
         /// </summary>
         /// <param name="input">The input.</param>
         /// <returns>Returns a value indicating whether the input contains the Data tag.</returns>
-        bool IsDataTagPresent(string input);
+        bool ContainsDataTag(string input);
 
         /// <summary>
         /// Checks whether the row data is separated correctly. 
         /// </summary>
         /// <param name="rowData">The row data.</param>
         /// <returns>Returns a value whether the row data is separated correctly or not.</returns>
-        bool IsRowDataSeparatedCorrectly(string rowData);
+        bool IsRowDataDelimiterValid(string rowData);
 
         /// <summary>
         /// Checks whether or not the header is present.
         /// </summary>
         /// <param name="input">The input.</param>
         /// <returns>Returns a value indicating whether the input contains header or not.</returns>
-        bool IsHeaderPresent(string input);
+        bool ContainsHeader(string input);
 
         /// <summary>
         /// Checks whether the meta information of the input is valid.
         /// </summary>
         /// <param name="input">The input.</param>
         /// <returns>Returns a value indicating whether the input contains valid meta information or not.</returns>
-        bool IsMetaInformationFormatValid(string input);
+        bool IsMetaInformationValid(string input);
 
         /// <summary>
         /// Checks whether the rows format is valid.

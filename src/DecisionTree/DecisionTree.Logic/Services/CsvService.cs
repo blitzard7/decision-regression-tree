@@ -35,7 +35,7 @@ namespace DecisionTree.Logic.Services
         /// <returns>Returns the constructed <see cref="CsvData"/> from the imported file.</returns>
         public CsvData CreateCsvDataFromFile(string file)
         {
-            if (!_formValidator.IsMetaInformationFormatValid(file))
+            if (!_formValidator.IsMetaInformationValid(file))
             {
                 throw new CsvDataInvalidMetadataException($"Imported file does not match with expected format.");
             }
@@ -45,7 +45,7 @@ namespace DecisionTree.Logic.Services
             var columns = CreateColumns(metaDataInformation);
             var rows = GetRowValues(metaDataInformation[1]).ToList();
 
-            var areAmountOfRowsAndColsEqual = _formValidator.AreAmountOfRowValuesWithColumnEntriesEqual(headerInformation, rows);
+            var areAmountOfRowsAndColsEqual = _formValidator.AreRowValuesAlignedWithColumns(headerInformation, rows);
             if (!areAmountOfRowsAndColsEqual)
             {
                 throw new CsvDataInvalidMetadataException("Amount of column and row values do not match.");

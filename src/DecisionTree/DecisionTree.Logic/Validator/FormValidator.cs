@@ -17,7 +17,7 @@ namespace DecisionTree.Logic.Validator
         /// <param name="column">The columns.</param>
         /// <param name="rows">The row values.</param>
         /// <returns>Returns a value indicating whether the amount of columns and row values are equal or not.</returns>
-        public bool AreAmountOfRowValuesWithColumnEntriesEqual(IEnumerable<string> column, IEnumerable<string> rows)
+        public bool AreRowValuesAlignedWithColumns(IEnumerable<string> column, IEnumerable<string> rows)
         {
             var tmpCols = column.ToArray();
             var tmpRows = rows.ToArray();
@@ -33,7 +33,7 @@ namespace DecisionTree.Logic.Validator
         /// </summary>
         /// <param name="input">The input.</param>
         /// <returns>Returns a value whether the input contains a valid column format.</returns>
-        public bool IsColumnFormatValid(string input)
+        public bool IsColumnStructureValid(string input)
         {
             var splitColumn = input.Split(ValidDataSeparator, StringSplitOptions.RemoveEmptyEntries);
 
@@ -45,7 +45,7 @@ namespace DecisionTree.Logic.Validator
         /// </summary>
         /// <param name="input">The input.</param>
         /// <returns>Returns a value indicating whether the input contains the Data tag.</returns>
-        public bool IsDataTagPresent(string input)
+        public bool ContainsDataTag(string input)
         {
             var splitMetaInformation = input.Split(ValidDataSeparator, StringSplitOptions.RemoveEmptyEntries);
 
@@ -63,7 +63,7 @@ namespace DecisionTree.Logic.Validator
         /// </summary>
         /// <param name="rowData">The row data.</param>
         /// <returns>Returns a value whether the row data is separated correctly or not.</returns>
-        public bool IsRowDataSeparatedCorrectly(string rowData)
+        public bool IsRowDataDelimiterValid(string rowData)
         {
             var splitData = rowData.Split(ValidValueSeparator, StringSplitOptions.RemoveEmptyEntries);
 
@@ -80,7 +80,7 @@ namespace DecisionTree.Logic.Validator
         /// </summary>
         /// <param name="input">The input.</param>
         /// <returns>Returns a value indicating whether the input contains header or not.</returns>
-        public bool IsHeaderPresent(string input)
+        public bool ContainsHeader(string input)
         {
             var tmpInput = input.Replace(ValidValuesEntrySeparator, string.Empty);
             if (tmpInput.StartsWith(ValidDataSeparator))
@@ -97,9 +97,9 @@ namespace DecisionTree.Logic.Validator
         /// </summary>
         /// <param name="input">The input.</param>
         /// <returns>Returns a value indicating whether the input contains valid meta information or not.</returns>
-        public bool IsMetaInformationFormatValid(string input)
+        public bool IsMetaInformationValid(string input)
         {
-            return input.Length > 0 && (IsHeaderPresent(input) && IsDataTagPresent(input));
+            return input.Length > 0 && (ContainsHeader(input) && ContainsDataTag(input));
         }
 
         /// <summary>
