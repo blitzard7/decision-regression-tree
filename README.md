@@ -141,5 +141,6 @@ This is a **prototype**, so it's not production-ready—just a hands-on implemen
 Here are a few tasks planned for future development:
 
 - [x] Migrate from .NET Core 3.1 to .NET 8
+- [ ] Add workflow for this project
 - [ ] Refactor the Decision Tree implementation for better readability and modularity
 - [ ] Implement a Regression Tree functionality
