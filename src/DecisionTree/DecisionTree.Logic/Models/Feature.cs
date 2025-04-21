@@ -9,7 +9,7 @@ namespace DecisionTree.Logic.Models
         public double FeatureEntropy { get; set; }
 
         public double FeatureInformationGain { get; set; }
->
+
         public List<string> Values { get; set; }
     }
 }
